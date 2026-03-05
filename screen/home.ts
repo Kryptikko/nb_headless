@@ -12,7 +12,6 @@ ${styleText('gray', '[Home State]')}
   switch (state.selection) {
     case "s":
       state.current = SCREEN_IDS.dungeon_combat;
-      state.selection = ""
       break;
     case "e":
       break;
@@ -21,6 +20,7 @@ ${styleText('gray', '[Home State]')}
     default:
       break;
   }
+  state.selection = ""
   return state
 }
 

@@ -15,7 +15,6 @@ const state: WorldState = {
   context: {}
 }
 
-
 type ScreenFn = (state: WorldState) => void;
 const _empty_fn = () => { }
 const SCREENS: Record<SCREEN_IDS, ScreenFn> = {
