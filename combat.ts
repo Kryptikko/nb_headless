@@ -1,9 +1,7 @@
-import _, { at } from "lodash"
-import { COMBAT_POSITION } from './types/Character.ts'
+import _ from "lodash"
+import { COMBAT_POSITION, COMBAT_EFFECT } from './types/Character.ts'
 import type { Character } from './types/Character.ts'
-
-// const attackers: Array<Character> = []
-// const defenders: Array<Character> = []
+import combat_effects from './combat_effect'
 
 const log: Array<string> = []
 // const result = ?
@@ -18,8 +16,17 @@ export const _is_combat_over = (attackers: Array<Character>, defenders: Array<Ch
 
   return COMBAT_RESULT.ONGOING
 }
-export const combat_simulation = (attackers: Array<Character>, defenders: Array<Character>) => {
 
+
+type CombatEvent = {
+  ability: string,
+  caster: string,
+  target: string,
+}
+const combat_stack: Array<CombatEvent> = []
+// export to a ability repository
+
+export const combat_simulation = (attackers: Array<Character>, defenders: Array<Character>) => {
   if (_.isEmpty(attackers) || _.isEmpty(defenders))
     return []
   _.map(attackers, att => {
@@ -37,22 +44,30 @@ export const combat_simulation = (attackers: Array<Character>, defenders: Array<
     .value()
   let result: COMBAT_RESULT = COMBAT_RESULT.ONGOING
   let turn = 0
+  let ch: Character
+  let queue_head = 0
+  let enemy: Array<Character>
   do {
     turn++
-    queue.forEach((ch: Character) => {
-      const enemy = ch.position == COMBAT_POSITION.ATTACKER ? defenders : attackers
-      _(enemy)
-        .filter((ch) => ch.hp_now > 0)
-        .take(1)
-        .forEach((target: Character) => {
-          const damage = Math.max(target.def - ch.att, 1)
-          target.hp_now -= damage
-          // detect if dead
-          // add damage log
-          log.push(`${turn} - ${ch.display_name} hits ${target.display_name} for 💥 -${damage}!`)
+    queue_head = (queue_head + 1) % queue.length
+    ch = _.get(queue, queue_head)
+    enemy = ch.position == COMBAT_POSITION.ATTACKER ? defenders : attackers
+    _(enemy)
+      // TODO: change to - is valid target (check if alive and can be attacked)
+      .filter((ch) => ch.hp_now > 0)
+      .take(ch.ability_primary.target_count)
+      .forEach((target: Character) => {
+        _.forEach(ch.ability_primary.effects, (effect: COMBAT_EFFECT) => {
+          // the effet fn applies the changes to the targets, should return array of los
+          log.push(combat_effects[effect](ch, target, ch.ability_primary))
         })
-      result = _is_combat_over(attackers, defenders)
-    })
+        // combat_stack.push({
+        //   ability: ch.ability_primary.id,
+        //   caster: ch.id,
+        //   target: target.id
+        // })
+      })
+    result = _is_combat_over(attackers, defenders)
   } while (result == COMBAT_RESULT.ONGOING)
 
   return log

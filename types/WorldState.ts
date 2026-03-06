@@ -13,6 +13,6 @@ export type WorldState = {
   selection: string,
   context: Object // dont know yet
   // game state
-  guild_bank: Object
-  roster: Array<Character>
+  // guild_bank: Object
+  // roster: Array<Character>
 }

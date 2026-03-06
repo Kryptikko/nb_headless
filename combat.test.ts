@@ -1,4 +1,5 @@
 import { combat_simulation } from "./combat";
+import { MeleeAttack, Cleave, Blizzard } from "./data/abilities.ts";
 import type { Character } from './types/Character.ts'
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
@@ -14,6 +15,7 @@ const attackers: Array<Character> = [{
   def: 1,
   mgc: 1,
   ini: 1,
+  ability_primary: Cleave
 }, {
   id: 'id_2',
   display_name: "Attacker 2",
@@ -25,6 +27,7 @@ const attackers: Array<Character> = [{
   def: 1,
   mgc: 1,
   ini: 3,
+  ability_primary: Blizzard
 }]
 const defenders: Array<Character> = [{
   id: 'id_d_1',
@@ -37,9 +40,10 @@ const defenders: Array<Character> = [{
   def: 1,
   mgc: 1,
   ini: 2,
+  ability_primary: MeleeAttack
 }, {
-  id: 'id_d_1',
-  display_name: "Defender 1",
+  id: 'id_d_2',
+  display_name: "Defender 2",
   hp_max: 10,
   hp_now: 10,
   level: 1,
@@ -48,6 +52,7 @@ const defenders: Array<Character> = [{
   def: 1,
   mgc: 1,
   ini: 1,
+  ability_primary: MeleeAttack
 }]
 
 test('No attackers results in no combat logs', (_t) => {
@@ -60,6 +65,7 @@ test('No defenders results in no combat', (_t) => {
 
 test('Speed combat prioritisation', (_t) => {
   var result = combat_simulation(attackers, defenders)
+  console.log(result)
   assert.equal(result.length, 40)
   // assert.deepEqual(combat_simulation())
 })
