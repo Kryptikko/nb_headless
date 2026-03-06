@@ -1,0 +1,63 @@
+import _ from "lodash"
+import { type WorldState } from '../types/WorldState';
+import health_bar from "./components/health_bar.ts";
+import type { Character } from "../types/Character";
+
+
+const CharacterPreview = (ch?: Character): string => {
+  if (!ch) return ''
+  const template = `
+[Character Card Preview]
+${ch.display_name} Lv${ch.level} | Tank Role
+[HP Bar ${health_bar(ch)} [ATK Icon +${ch.att}] [DEF Shield +${ch.def}]
+"${ch.ability_primary.display_name}: ${ch.ability_primary.target_count} target(s) for ${ch.ability_primary.base_power} Power"
+  `
+  return template
+}
+
+const PartySlot = (c?: Character, focus: boolean = false, selected: boolean = false): string => {
+  if (!c) return _.padEnd(`${focus ? "-->" : "   "}${selected ? "•" : " "} Tank[Empty]`, 36, " ");
+  return `${focus ? "-->" : "   "}${selected ? "•" : " "} ${c.display_name}[Drag Icon]HP${c.hp_max} ATK${c.att}`
+}
+type AssemblyAreaState = {
+  selection: number,
+  focus: number,
+  party: Array<Character | undefined>
+}
+const _state: AssemblyAreaState = {
+  selection: -1,
+  focus: 0,
+  party: [undefined, undefined, undefined, undefined],
+}
+
+const _handle_input = (input: string) => {
+  switch (input.toLocaleLowerCase()) {
+    case "j":
+      _state.focus = (_state.focus + 1) % 4
+      break;
+    case "k":
+      _state.focus = _state.focus == 0 ? 3 : (_state.focus - 1) % 4
+      break;
+    case " ":
+      _state.selection = _state.focus
+      break;
+    default:
+      break;
+  }
+  return
+}
+
+const assembly_area = (state: WorldState) => {
+  _handle_input(state.selection)
+  const header = '[Party Slots]                  [Morale Torch: 🔥🔥🔥🔥🔥 100/100]'
+  const body = _state.party.map((ch, idx) => PartySlot(ch, idx == _state.focus, idx == _state.selection)).join('\n')
+  const footer = CharacterPreview(_.find(_state.party, ['id', _state.selection]));
+  // render
+  console.log(header);
+  console.log(body);
+  console.log(footer);
+  console.log('use j and k to navigate ↑ and ↓');
+  return state
+}
+
+export default assembly_area;

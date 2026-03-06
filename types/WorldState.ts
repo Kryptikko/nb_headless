@@ -3,6 +3,7 @@ import type { Character } from "./Character";
 export enum SCREEN_IDS {
   home,
   dungeon_combat,
+  assembly_area,
 }
 type ScreenFn = (state: WorldState) => void;
 
@@ -14,5 +15,5 @@ export type WorldState = {
   context: Object // dont know yet
   // game state
   // guild_bank: Object
-  // roster: Array<Character>
+  roster: Array<Character>
 }

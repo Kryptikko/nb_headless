@@ -64,9 +64,9 @@ export type Character = {
   def: number
   mgc: number
   ini: number
+  ability_primary: CombatAbility
   // combat overhead
   position?: COMBAT_POSITION
   // combat_effects: Array<CombatEffect>
-  ability_primary: CombatAbility
   // ability_passive: CombatAbility
 }

@@ -4,6 +4,7 @@ import type { Character } from "../types/Character"
 import type { WorldState } from "../types/WorldState"
 import { MeleeAttack, Cleave, Blizzard } from "../data/abilities.ts";
 import { combat_simulation } from "../combat";
+import health_bar from "./components/health_bar.ts";
 
 let _c_state = {
   turn: 0,
@@ -67,17 +68,7 @@ let _c_state = {
 }
 
 const CharacterStatus = (ch: Character) => {
-  let hp_bar = ""
-  if (ch.hp_now <= 0) hp_bar = '[          ]'
-  else {
-    let hp_percent = Math.ceil((ch.hp_now / ch.hp_max) * 10)
-    for (let index = 0; index < 10; index++) {
-      hp_percent--
-      hp_bar += hp_percent > 0 ? "█" : " "
-    }
-    hp_bar = '[' + hp_bar + ']';
-  }
-  return _.padEnd(ch.display_name, 10, " ") + `👨‍🦰 ${hp_bar}` + _.padEnd(` ${ch.hp_now}/${ch.hp_max}`, 8, " ")
+  return _.padEnd(ch.display_name, 10, " ") + `👨‍🦰 ${health_bar(ch)}` + _.padEnd(` ${ch.hp_now}/${ch.hp_max}`, 8, " ")
 }
 
 let _global_log: Array<string> = []
