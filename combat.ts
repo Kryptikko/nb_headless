@@ -58,7 +58,7 @@ export const combat_simulation = (attackers: Array<Character>, defenders: Array<
       .take(ch.ability_primary.target_count)
       .forEach((target: Character) => {
         _.forEach(ch.ability_primary.effects, (effect: COMBAT_EFFECT) => {
-          // the effet fn applies the changes to the targets, should return array of los
+          // the effet fn applies the changes to the targets
           log.push(combat_effects[effect](ch, target, ch.ability_primary))
         })
         // combat_stack.push({

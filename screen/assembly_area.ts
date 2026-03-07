@@ -1,3 +1,4 @@
+import { styleText } from "node:util";
 import _ from "lodash"
 import { SCREEN_IDS, type WorldState } from '../types/WorldState';
 import health_bar from "./components/health_bar.ts";
@@ -52,6 +53,10 @@ const _handle_input = (input: string, state: WorldState) => {
       state.input = ""
       break;
     case "s":
+      if (!_validate(state)) {
+        state.input = ""
+        break;
+      }
       state.current = SCREEN_IDS.dungeon_combat;
       state.input = ""
       break;
@@ -71,10 +76,13 @@ const encoutner_selection = (state: WorldState) => {
 
   return '<' + _.pad(`${options[0]}`, 20, ' ') + '>';
 }
+const _validate = (state: WorldState): boolean => {
+  return state.party.length > 0 // && state.encounter.length > 0
+}
 
 const assembly_area = (state: WorldState) => {
   _handle_input(state.input, state)
-  const header = '[Party Slots]                  [Morale Torch: 🔥🔥🔥🔥🔥 100/100]'
+  const header = '[Party Slots]                  [Morale: 🔥🔥🔥🔥🔥 100/100]'
   const body = state.party.map((ch, idx) => PartySlot(state.roster[ch], idx == _state.focus, idx == _state.selection)).join('\n')
   const footer = CharacterPreview(_.find(_state.party, ['id', _state.selection]));
   // render
@@ -84,7 +92,12 @@ const assembly_area = (state: WorldState) => {
   console.log(footer);
   console.log("press 'j' and 'k' to navigate ↑ and ↓");
   console.log("press 'r' to assing members from roster");
-  console.log("press 's' to send off the party");
+  if (_validate(state)) {
+    console.log('gray', "press 's' to send off the party");
+  } else {
+    console.log(styleText('gray', "press 's' to send off the party"));
+  }
+
   return state
 }
 
