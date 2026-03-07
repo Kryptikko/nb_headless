@@ -4,6 +4,7 @@ export enum SCREEN_IDS {
   home,
   dungeon_combat,
   assembly_area,
+  guild_roster
 }
 type ScreenFn = (state: WorldState) => void;
 
@@ -13,9 +14,11 @@ export type WorldState = {
   game_now: number,
   delta: number,
   current: SCREEN_IDS, // TODO: make it an enum
-  selection: string,
+  previous: SCREEN_IDS,
+  input: string,
   context: Object // dont know yet
   // game state
   // guild_bank: Object
+  party: Array<string>
   roster: Array<Character>
 }

@@ -6,6 +6,7 @@ import home_screen from './screen/home'
 import combat_screen from './screen/combat'
 import { Cleave, Blizzard } from './data/abilities.ts'
 import assembly_area from "./screen/assembly_area.ts";
+import roster from "./screen/roster.ts";
 
 const _decoder = new StringDecoder('utf8');
 const RENDER_RATE = 1000 / 24 // 24 fps
@@ -14,8 +15,10 @@ const state: WorldState = {
   delta: 0,
   game_now: 0,
   game_start: 0,
+  previous: SCREEN_IDS.home,
   current: SCREEN_IDS.home,
-  selection: "",
+  party: [],
+  input: "",
   context: {},
   roster: [{
     id: 'war1',
@@ -50,13 +53,14 @@ const SCREENS: Record<SCREEN_IDS, ScreenFn> = {
   [SCREEN_IDS.home]: home_screen,
   [SCREEN_IDS.dungeon_combat]: combat_screen,
   [SCREEN_IDS.assembly_area]: assembly_area,
+  [SCREEN_IDS.guild_roster]: roster
 }
 console.log("nb> q  →  exit\n");
 
 const handle_input = (input: string, state: WorldState) => {
   //TODO: check for valid inputs
   // console.log(input)
-  state.selection = input
+  state.input = input
   // render_frame(state)
 }
 const render_frame = (state: WorldState) => {
@@ -77,7 +81,7 @@ const loop = () => {
   next_frame = next_frame + 100 // RENDER_RATE
   process.stdout.write('\x1b[2J\x1b[H'); // ANSI clear + home
   SCREENS[state.current](state)
-  state.selection = ""
+  state.input = ""
   // render 
   // adjust frame offset
   last_frame = Date.now()

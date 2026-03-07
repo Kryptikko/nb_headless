@@ -10,21 +10,25 @@ ${styleText('gray', '[Home State]')}
 [${styleText('underline', 'R')}oster] 
 `
   console.log(template);
-  switch (state.selection.toLocaleLowerCase()) {
+  switch (state.input.toLocaleLowerCase()) {
     case "s":
+      state.previous = SCREEN_IDS.home;
       state.current = SCREEN_IDS.dungeon_combat;
       break;
     case "a":
+      state.previous = SCREEN_IDS.home;
       state.current = SCREEN_IDS.assembly_area;
       break;
     case "e":
       break;
     case "r":
+      state.previous = SCREEN_IDS.home;
+      state.current = SCREEN_IDS.guild_roster;
       break;
     default:
       break;
   }
-  state.selection = ""
+  state.input = ""
   return state
 }
 

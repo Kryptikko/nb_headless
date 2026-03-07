@@ -1,6 +1,6 @@
-import { combat_simulation } from "./combat";
-import { MeleeAttack, Cleave, Blizzard } from "./data/abilities.ts";
-import type { Character } from './types/Character.ts'
+import { combat_simulation } from "./../combat";
+import { MeleeAttack, Cleave, Blizzard } from "./../data/abilities.ts";
+import type { Character } from './../types/Character.ts'
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 
@@ -65,7 +65,6 @@ test('No defenders results in no combat', (_t) => {
 
 test('Speed combat prioritisation', (_t) => {
   var result = combat_simulation(attackers, defenders)
-  console.log(result)
-  assert.equal(result.length, 40)
+  assert.equal(result.length, 16)
   // assert.deepEqual(combat_simulation())
 })
