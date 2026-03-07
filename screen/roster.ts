@@ -4,39 +4,36 @@ import health_bar from "./components/health_bar.ts";
 import type { Character } from "../types/Character";
 import container from "./components/container.ts";
 
+const PARTY_SIZE_LIMIT = 4
 type RosterState = {
-  selection: Array<string>,
   focus: number,
-  party: Array<Character | undefined>
 }
 const _state: RosterState = {
-  selection: [],
   focus: 0,
-  party: [],
 }
 // ☐
 // ☑
 // ☒
 
-const RosterRow = (c?: Character, focus: boolean = false, selected: boolean = false): string => {
-  if (!c) return _.padEnd(`${focus ? "-->" : "   "} ☒ Tank [Empty]`, 36, " ");
+const RosterRow = (c: Character, focus: boolean = false, selected: boolean = false): string => {
+  // if (!c) return _.padEnd(`${focus ? "-->" : "   "} '☐'Tank [Empty]`, 36, " ");
   return `${focus ? "-->" : "   "} ${selected ? '☑' : '☐'} ${c.display_name} [${c.id}]HP${c.hp_max} ATK${c.att} `
 }
 
 const MemberPreview = (ch?: Character): string => {
   if (!ch) return ''
-  const template = `
-  [Character Card Preview]
+  const template = container(`
 ${ch.display_name} Lv${ch.level} | Tank Role
-  [HP Bar ${health_bar(ch)} [ATK Icon + ${ch.att}][DEF Shield + ${ch.def}]
-  "${ch.ability_primary.display_name}: ${ch.ability_primary.target_count} target(s) for ${ch.ability_primary.base_power} Power"
-    `
+[HP Bar ${health_bar(ch)} [ATK Icon + ${ch.att}][DEF Shield + ${ch.def}]
+"${ch.ability_primary.display_name}: ${ch.ability_primary.target_count} target(s) for ${ch.ability_primary.base_power} Power"
+`, '[Character Card Preview]')
+
   return template
 }
 
 
 const _handle_input = (state: WorldState) => {
-  const len = state.roster.length;
+  const len = Object.keys(state.roster).length;
   switch (state.input.toLocaleLowerCase()) {
     case "j":
       _state.focus = (_state.focus + 1) % len
@@ -47,18 +44,17 @@ const _handle_input = (state: WorldState) => {
       state.input = ""
       break;
     case " ":
-      const focused_character = state.roster[_state.focus]
+      const focused_character = Object.values(state.roster)[_state.focus]
       if (!focused_character) break;
-      const idx_of = _.indexOf(_state.selection, focused_character.id);
+      const idx_of = _.indexOf(state.party, focused_character.id);
       if (idx_of == -1) {
-        _state.selection.push(focused_character.id)
+        state.party.push(focused_character.id)
       } else {
-        _state.selection = _.remove(_state.selection, (idx) => idx == focused_character.id)
+        state.party = _.remove(state.party, (idx) => idx != focused_character.id)
       }
       state.input = ""
       break;
     case "a":
-      state.party = _state.selection
       state.input = ""
       state.current = SCREEN_IDS.assembly_area
       break;
@@ -69,17 +65,15 @@ const _handle_input = (state: WorldState) => {
 }
 
 const roster = (state: WorldState) => {
-  _state.selection = state.party
   _handle_input(state)
   const header = `[Guild Roster][${state.roster.length} / 100]`
-  const body = state
-    .roster
-    .map((ch, idx) => RosterRow(ch, idx == _state.focus, _state.selection.includes(ch.id)))
+  const body = Object.values(state.roster)
+    .map((ch, idx) => RosterRow(ch, idx == _state.focus, state.party.includes(ch.id)))
     .join('\n')
-
-  const footer = MemberPreview(_.find(state.roster, ['id', _state.selection]));
+  const focused_character_id = Object.values(state.roster)[_state.focus];
+  const footer = MemberPreview(focused_character_id);
   // render
-  console.log(_state.focus, _state.selection, state.party);
+  console.log('DEBUG LINE - ', _state.focus, state.party);
   console.log(header);
   console.log(container(body));
   console.log(footer);

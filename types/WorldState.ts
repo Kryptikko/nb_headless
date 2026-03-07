@@ -20,5 +20,5 @@ export type WorldState = {
   // game state
   // guild_bank: Object
   party: Array<string>
-  roster: Array<Character>
+  roster: { [key: string]: Character }
 }

@@ -17,8 +17,9 @@ ${ch.display_name} Lv${ch.level} | Tank Role
 }
 
 const PartySlot = (c?: Character, focus: boolean = false, selected: boolean = false): string => {
-  if (!c) return _.padEnd(`${focus ? "-->" : "   "}${selected ? "•" : " "} Tank[Empty]`, 36, " ");
-  return `${focus ? "-->" : "   "}${selected ? "•" : " "} ${c.display_name}[Drag Icon]HP${c.hp_max} ATK${c.att}`
+
+  if (!c) return _.padEnd(`${focus ? "-->" : "   "}${selected ? "•" : " "} Tank [Empty]`, 43, " ");
+  return `${focus ? "-->" : "   "}${selected ? "•" : " "} ${_.padEnd(c.display_name, 20, " ")}[Drag Icon] HP${c.hp_max} ATK${c.att}`
 }
 type AssemblyAreaState = {
   selection: number,
@@ -58,7 +59,7 @@ const _handle_input = (input: string, state: WorldState) => {
 const assembly_area = (state: WorldState) => {
   _handle_input(state.input, state)
   const header = '[Party Slots]                  [Morale Torch: 🔥🔥🔥🔥🔥 100/100]'
-  const body = _state.party.map((ch, idx) => PartySlot(ch, idx == _state.focus, idx == _state.selection)).join('\n')
+  const body = state.party.map((ch, idx) => PartySlot(state.roster[ch], idx == _state.focus, idx == _state.selection)).join('\n')
   const footer = CharacterPreview(_.find(_state.party, ['id', _state.selection]));
   // render
   console.log(header);

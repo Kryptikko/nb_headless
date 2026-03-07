@@ -20,31 +20,34 @@ const state: WorldState = {
   party: [],
   input: "",
   context: {},
-  roster: [{
-    id: 'war1',
-    display_name: "Warrior",
-    level: 1,
-    xp: 0,
-    hp_max: 120,
-    hp_now: 120,
-    att: 3,
-    def: 1,
-    mgc: 0,
-    ini: 2,
-    ability_primary: Cleave
-  }, {
-    id: 'wiz1',
-    display_name: "Wizard",
-    level: 1,
-    xp: 0,
-    hp_max: 60,
-    hp_now: 60,
-    att: 3,
-    def: 1,
-    mgc: 0,
-    ini: 1,
-    ability_primary: Blizzard
-  }]
+  roster: {
+    'war1': {
+      id: 'war1',
+      display_name: "Warrior",
+      level: 1,
+      xp: 0,
+      hp_max: 120,
+      hp_now: 120,
+      att: 3,
+      def: 1,
+      mgc: 0,
+      ini: 2,
+      ability_primary: Cleave
+    },
+    'wiz1': {
+      id: 'wiz1',
+      display_name: "Wizard",
+      level: 1,
+      xp: 0,
+      hp_max: 60,
+      hp_now: 60,
+      att: 3,
+      def: 1,
+      mgc: 0,
+      ini: 1,
+      ability_primary: Blizzard
+    }
+  }
 }
 
 type ScreenFn = (state: WorldState) => void;
