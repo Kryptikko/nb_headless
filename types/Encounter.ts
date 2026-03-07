@@ -1,6 +1,7 @@
 import type { Character } from "./Character"
 
 export type CombatEncounter = {
+  id: string,
   display_name: string,
   // copy loot distribution from the GD project
   enemies: Array<Character>,

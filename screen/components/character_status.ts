@@ -1,4 +1,3 @@
-
 import _ from "lodash"
 import type { Character } from "../../types/Character"
 import health_bar from "./health_bar"

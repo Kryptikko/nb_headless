@@ -16,9 +16,9 @@ export type WorldState = {
   current: SCREEN_IDS, // TODO: make it an enum
   previous: SCREEN_IDS,
   input: string,
-  context: Object // dont know yet
   // game state
   // guild_bank: Object
+  encounter: string,
   party: Array<string>
   roster: { [key: string]: Character }
 }

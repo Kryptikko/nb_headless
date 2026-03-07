@@ -1,4 +1,4 @@
-import type { Character, CombatAbility } from '../types/Character.ts'
+import type { CombatAbility } from '../types/Character.ts'
 import { TARGET_TYPE, COMBAT_EFFECT } from '../types/Character.ts'
 
 // abilities work by having generic behaviour

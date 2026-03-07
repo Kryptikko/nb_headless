@@ -2,78 +2,36 @@ import _ from "lodash"
 import { styleText } from "node:util";
 import type { Character } from "../types/Character"
 import type { WorldState } from "../types/WorldState"
-import { MeleeAttack, Cleave, Blizzard } from "../data/abilities.ts";
+// import { MeleeAttack, Cleave, Blizzard } from "../data/abilities.ts";
 import { combat_simulation } from "../combat";
-import damage_indicator from "./components/damage_indicator.ts";
+// import damage_indicator from "./components/damage_indicator.ts";
+// import cast_bar from "./components/cast_bar.ts";
 import character_status from "./components/character_status.ts";
-import cast_bar from "./components/cast_bar.ts";
+import { dungeon_floor_1 } from "../data/encounters.ts";
 
-let _local_state = {
+type CombatState = {
+  last_turn_at: number
+  turn: number
+  log: Array<string>
+  party: Array<Character>
+  enemies: Array<Character>
+}
+let _local_state: CombatState = {
   last_turn_at: 1000,
   turn: 0,
-  log: [] as Array<string>,
-  party: [{
-    display_name: "Warrior",
-    hp_max: 120,
-    hp_now: 120,
-    att: 3,
-    def: 1,
-    mgc: 0,
-    ini: 2,
-    ability_primary: Cleave
-  }, {
-    display_name: "Wizard",
-    hp_max: 50,
-    hp_now: 50,
-    att: 3,
-    mgc: 2,
-    def: 1,
-    ini: 2,
-    ability_primary: Blizzard
-  }] as Array<Character>,
-  enemy: [{
-    id: 'enemy_1',
-    display_name: "Goblin1",
-    hp_max: 60,
-    hp_now: 60,
-    level: 1,
-    xp: 0,
-    att: 1,
-    def: 1,
-    mgc: 1,
-    ini: 1,
-    ability_primary: MeleeAttack
-  }, {
-    id: 'enemy_2',
-    display_name: "Goblin2",
-    hp_max: 60,
-    hp_now: 60,
-    level: 1,
-    xp: 0,
-    att: 1,
-    def: 1,
-    mgc: 1,
-    ini: 1,
-    ability_primary: MeleeAttack
-  }, {
-    id: 'enemy_3',
-    display_name: "Goblin3",
-    hp_max: 60,
-    hp_now: 60,
-    level: 1,
-    xp: 0,
-    att: 1,
-    def: 1,
-    mgc: 1,
-    ini: 1,
-    ability_primary: MeleeAttack
-  }] as Array<Character>,
+  log: [],
+  party: [],
+  enemies: []
 }
 
 let _global_log: Array<string> = []
 // combat screen needs to be a function that returns a render ?
 const CombatScreen = (state: WorldState) => {
-  _global_log = combat_simulation(_local_state.party, _local_state.enemy)
+  // fetch encounter
+  // state.encounter
+  _local_state.party = _.map(state.party, id => _.get(state.roster, id));
+  _local_state.enemies = [...dungeon_floor_1.enemies]
+  _global_log = combat_simulation(_local_state.party, dungeon_floor_1.enemies)
   // TODO:  split 
   // handle input 
   // run simulation
@@ -102,7 +60,7 @@ ${styleText('gray', '[Start Dungeon Group]')}
   console.log(`Delta: ${state.delta}`);
   console.log(`FPS: ${Math.ceil(1000 / state.delta)}`);
   _local_state.party.map(ch => console.log(character_status(ch)))
-  _local_state.enemy.map(ch => console.log(character_status(ch)))
+  _local_state.enemies.map(ch => console.log(character_status(ch)))
   // console.log(cast_bar(4000, 1000, state.game_now))
   // const ind_state = _local_state.damage_ind_a_1
   // console.log(damage_indicator(42, 5000, state.game_now))

@@ -19,7 +19,7 @@ const state: WorldState = {
   current: SCREEN_IDS.home,
   party: [],
   input: "",
-  context: {},
+  encounter: "",
   roster: {
     'war1': {
       id: 'war1',
