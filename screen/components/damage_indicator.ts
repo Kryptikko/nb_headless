@@ -3,15 +3,16 @@ import { styleText } from "node:util";
 
 // 4 states, appear, highhted, cooldown, invisible
 // style appear == cooldown
-export default (value: number, frame: number) => {
-  let indicator = ""
-  if (frame < 0) {
-
-  } else if (frame < 2) {
+export default (value: number, start_at: number, now: number) => {
+  // let indicator = ""
+  let indicator = "" + start_at + "/" + now
+  if (start_at > now || now > (now + start_at)) {
+    // noop
+  } else if (now - start_at < 200) {
     indicator = styleText('red', `✨-${value}!`);
-  } else if (frame < 4) {
+  } else if (now - start_at < 400) {
     indicator = styleText('bgRed', `✨-${value}!`);
-  } else if (frame < 6) {
+  } else if (now - start_at < 1000) {
     indicator = `✨-${value}!`
   }
   return _.padEnd(indicator, 5, ' ')

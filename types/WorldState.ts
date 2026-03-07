@@ -9,6 +9,8 @@ type ScreenFn = (state: WorldState) => void;
 
 export type WorldState = {
   // render state
+  game_start: number,
+  game_now: number,
   delta: number,
   current: SCREEN_IDS, // TODO: make it an enum
   selection: string,

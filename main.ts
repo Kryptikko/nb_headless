@@ -12,6 +12,8 @@ const RENDER_RATE = 1000 / 24 // 24 fps
 
 const state: WorldState = {
   delta: 0,
+  game_now: 0,
+  game_start: 0,
   current: SCREEN_IDS.home,
   selection: "",
   context: {},
@@ -69,7 +71,9 @@ const render_frame = (state: WorldState) => {
 let next_frame = Date.now()
 let last_frame = Date.now()
 const loop = () => {
-  state.delta = Date.now() - last_frame
+  const now = Date.now()
+  state.game_now = now - state.game_start;
+  state.delta = now - last_frame
   next_frame = next_frame + 100 // RENDER_RATE
   process.stdout.write('\x1b[2J\x1b[H'); // ANSI clear + home
   SCREENS[state.current](state)
@@ -79,6 +83,7 @@ const loop = () => {
   last_frame = Date.now()
   setTimeout(loop, Math.max(0, next_frame - Date.now()))
 }
+state.game_start = Date.now()
 loop()
 
 process.stdin.setRawMode(true)
