@@ -45,6 +45,8 @@ export type CombatAbility = {
   // post_effect
   // fail_effect
   // gear
+  cooldown: number,
+  cooldown_now: number,
   base_power: number,
   effects: Array<COMBAT_EFFECT>
 }

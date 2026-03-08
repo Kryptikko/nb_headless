@@ -24,3 +24,5 @@ This project was created using `bun init` in bun v1.3.10. [Bun](https://bun.com)
 4. Stat Modifiers (copy from PC)
 
 
+## References
+https://www.w3schools.com/charsets/ref_utf_tiles.asp
