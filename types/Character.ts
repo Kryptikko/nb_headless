@@ -2,6 +2,8 @@ export enum COMBAT_EFFECT {
   PHYSICAL_DAMAGE,
   MAGIC_DAMAGE,
   HEAL,
+  BURNING,
+  BURN,
 }
 
 export enum COMBAT_POSITION {
@@ -51,6 +53,13 @@ export type CombatAbility = {
   effects: Array<COMBAT_EFFECT>
 }
 
+export type CombatStatusEffet = {
+  id: string
+  source: string // caster id
+  visual: string
+  ability: CombatAbility
+}
+
 export type Character = {
   id: string
   display_name: string // max 10
@@ -71,4 +80,5 @@ export type Character = {
   position?: COMBAT_POSITION
   // combat_effects: Array<CombatEffect>
   // ability_passive: CombatAbility
+  status: Array<CombatStatusEffet>
 }

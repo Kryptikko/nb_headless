@@ -1,6 +1,8 @@
 import _ from "lodash"
 import { COMBAT_EFFECT } from '../types/Character.ts'
 import type { Character, CombatAbility } from '../types/Character.ts'
+import cast_bar from "../screen/components/cast_bar.ts"
+import { Burning } from "../data/status.ts"
 // type CombatEffectHandler = (caster: Character, target: Character, ability: CombatAbility) => string
 
 const do_physical_damage = (caster: Character, target: Character, ability: CombatAbility) => {
@@ -21,8 +23,26 @@ const do_heal = (caster: Character, target: Character, ability: CombatAbility) =
   return `${caster.display_name} uses ${ability.display_name} on ${target.display_name} for ✨ -${heal}!`
 }
 
+// just do magic damage?
+const do_burn = (caster: Character, target: Character, ability: CombatAbility) => {
+  const burn = ability.base_power + caster.mgc
+  target.hp_now -= _.clamp(burn, 0, target.hp_now)
+  return `${caster.display_name} uses ${ability.display_name} on ${target.display_name} for 🔥 -${burn}!`
+}
+
+const apply_burning = (caster: Character, target: Character, ability: CombatAbility) => {
+  // const burn = ability.base_power + caster.mgc
+  if (!_.find(target.status, { source: caster.id, id: "burning" })) {
+    target.status.push({ ...Burning, source: caster.id })
+    return `${caster.display_name} applies ${ability.display_name} on ${target.display_name}`
+  }
+  return '';
+}
+
 export default {
   [COMBAT_EFFECT.PHYSICAL_DAMAGE]: do_physical_damage,
   [COMBAT_EFFECT.MAGIC_DAMAGE]: do_magic_damage,
   [COMBAT_EFFECT.HEAL]: do_heal,
+  [COMBAT_EFFECT.BURN]: do_burn,
+  [COMBAT_EFFECT.BURNING]: apply_burning,
 }

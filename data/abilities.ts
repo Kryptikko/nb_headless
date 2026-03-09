@@ -52,3 +52,21 @@ export const Cleave: CombatAbility = {
   effects: [COMBAT_EFFECT.PHYSICAL_DAMAGE],
   cooldown: 3000
 }
+export const FireBolt: CombatAbility = {
+  ..._ability_defaults,
+  id: "fire_bolt",
+  display_name: "Fire Bolt",
+  target_type: TARGET_TYPE.ENEMY,
+  target_count: 1,
+  base_power: 2,
+  effects: [COMBAT_EFFECT.BURN, COMBAT_EFFECT.BURNING],
+  cooldown: 3000
+}
+export const FireBoltDot: CombatAbility = {
+  ..._ability_defaults,
+  id: "fire_bolt_dot",
+  display_name: "Burning",
+  base_power: 2,
+  effects: [COMBAT_EFFECT.BURN],
+  cooldown: 3000
+}

@@ -9,6 +9,7 @@ import { dungeon_floor_1 } from "../data/encounters.ts";
 import { ability_cast_bar } from "./components/cast_bar.ts";
 import combat_effect from "../combat_effect/index.ts";
 import { SCHED_RR } from "node:cluster";
+import status_bar from "./components/status_bar.ts";
 
 enum COMBAT_RESULT {
   ONGOING,
@@ -80,7 +81,8 @@ const _process = (wstate: WorldState, lstate: CombatState) => {
         .forEach((target: Character) => {
           _.forEach(member.ability_primary.effects, (effect: COMBAT_EFFECT) => {
             // the effet fn applies the changes to the targets
-            _local_state.log.push(combat_effect[effect](member, target, member.ability_primary))
+            const log = combat_effect[effect](member, target, member.ability_primary)
+            _local_state.log.push(log)
           })
         })
       member.ability_primary.cooldown_now = member.ability_primary.cooldown
@@ -125,6 +127,7 @@ ${styleText('gray', '[Start Dungeon Group]')}
     if (ch) {
       row += character_status(ch)
       srow += ability_cast_bar(ch.ability_primary)
+      srow += status_bar(ch)
     }
     row = _.padEnd(row, 46, " ")
     srow = _.padEnd(srow, 46, " ")
@@ -132,6 +135,7 @@ ${styleText('gray', '[Start Dungeon Group]')}
     if (ch) {
       row += character_status(ch)
       srow += ability_cast_bar(ch.ability_primary)
+      srow += status_bar(ch)
     }
     console.log(row)
     console.log(srow)
@@ -140,7 +144,9 @@ ${styleText('gray', '[Start Dungeon Group]')}
   // Mage     🧙‍♂️  [███▌      ] 45/80    Goblin2 🧝‍♂️ [█▌        ] 12/100  ✨-22!
   // Rogue    🗡️  [███████▌  ] 110/120  Goblin3 🧝‍♂️ [          ] 0/100  ☠️
   // Tank     🛡️  [█████████ ] 140/140
-  console.log(`[Turn Log]`);
+  console.log(`
+
+[Turn Log]`);
   _.takeRight(_local_state.log, 3).map(log => console.log(log))
   return state
 }

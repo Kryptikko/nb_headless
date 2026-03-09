@@ -4,7 +4,7 @@ import { SCREEN_IDS } from './types/WorldState';
 import { StringDecoder } from "string_decoder";
 import home_screen from './screen/home'
 import combat_screen from './screen/combat'
-import { Cleave, Blizzard } from './data/abilities.ts'
+import { Cleave, Blizzard, FireBolt } from './data/abilities.ts'
 import assembly_area from "./screen/assembly_area.ts";
 import roster from "./screen/roster.ts";
 
@@ -32,7 +32,8 @@ const state: WorldState = {
       def: 1,
       mgc: 0,
       ini: 2,
-      ability_primary: Cleave
+      ability_primary: Cleave,
+      status: []
     },
     'wiz1': {
       id: 'wiz1',
@@ -45,7 +46,22 @@ const state: WorldState = {
       def: 1,
       mgc: 0,
       ini: 1,
-      ability_primary: Blizzard
+      ability_primary: Blizzard,
+      status: []
+    },
+    'sor1': {
+      id: 'sor1',
+      display_name: "Sorcerer",
+      level: 1,
+      xp: 0,
+      hp_max: 60,
+      hp_now: 60,
+      att: 3,
+      def: 1,
+      mgc: 0,
+      ini: 1,
+      ability_primary: FireBolt,
+      status: []
     }
   }
 }
