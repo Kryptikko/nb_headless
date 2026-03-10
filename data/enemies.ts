@@ -1,6 +1,5 @@
-import status_bar from "../screen/components/status_bar"
+import { ABILITY } from "../types/Ability"
 import type { Character } from "../types/Character"
-import { Cleave, MeleeAttack } from "./abilities"
 
 const _default_mob: Character = {
   id: '',
@@ -13,8 +12,7 @@ const _default_mob: Character = {
   def: 1,
   mgc: 1,
   ini: 2,
-  ability_primary: MeleeAttack,
-  status: []
+  ability_primary: ABILITY.MELEE,
 }
 export const Goblin: Character = {
   ..._default_mob,
@@ -27,7 +25,7 @@ export const Goblin: Character = {
   def: 1,
   mgc: 1,
   ini: 2,
-  ability_primary: MeleeAttack
+  ability_primary: ABILITY.MELEE
 }
 export const Troll: Character = {
   ..._default_mob,
@@ -40,5 +38,5 @@ export const Troll: Character = {
   def: 2,
   mgc: 1,
   ini: 2,
-  ability_primary: Cleave
+  ability_primary: ABILITY.CLEAVE
 }

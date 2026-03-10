@@ -3,8 +3,10 @@ import { SCREEN_IDS, type WorldState } from '../types/WorldState';
 import health_bar from "./components/health_bar.ts";
 import type { Character } from "../types/Character";
 import container from "./components/container.ts";
+import get_ability from "../data/abilities.ts";
+import { open_screen } from "../controller/screen.ts";
 
-const PARTY_SIZE_LIMIT = 4
+// const PARTY_SIZE_LIMIT = 4
 type RosterState = {
   focus: number,
 }
@@ -22,10 +24,11 @@ const RosterRow = (c: Character, focus: boolean = false, selected: boolean = fal
 
 const MemberPreview = (ch?: Character): string => {
   if (!ch) return ''
+  const ability = get_ability(ch.ability_primary)
   const template = container(`
 ${ch.display_name} Lv${ch.level} | Tank Role
 [HP Bar ${health_bar(ch)} [ATK Icon + ${ch.att}][DEF Shield + ${ch.def}]
-"${ch.ability_primary.display_name}: ${ch.ability_primary.target_count} target(s) for ${ch.ability_primary.base_power} Power"
+"${ability.display_name}: ${ability.target_count} target(s)"
 `, '[Character Card Preview]')
 
   return template
@@ -55,8 +58,8 @@ const _handle_input = (state: WorldState) => {
       state.input = ""
       break;
     case "a":
+      open_screen(state, SCREEN_IDS.assembly_area)
       state.input = ""
-      state.current = SCREEN_IDS.assembly_area
       break;
     default:
       break;

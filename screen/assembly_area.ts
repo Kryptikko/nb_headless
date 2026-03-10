@@ -5,15 +5,18 @@ import health_bar from "./components/health_bar.ts";
 import type { Character } from "../types/Character";
 import container from "./components/container.ts";
 import { dungeon_floor_1, dungeon_floor_2 } from "../data/encounters.ts";
+import get_ability from "../data/abilities.ts";
+import { open_screen } from "../controller/screen.ts";
 
 
 const CharacterPreview = (ch?: Character): string => {
   if (!ch) return ''
+  const pa = get_ability(ch.ability_primary)
   const template = `
 [Character Card Preview]
 ${ch.display_name} Lv${ch.level} | Tank Role
 [HP Bar ${health_bar(ch)} [ATK Icon +${ch.att}] [DEF Shield +${ch.def}]
-"${ch.ability_primary.display_name}: ${ch.ability_primary.target_count} target(s) for ${ch.ability_primary.base_power} Power"
+"${pa.display_name}: hits ${pa.target_count} target(s)"
   `
   return template
 }
@@ -49,7 +52,7 @@ const _handle_input = (input: string, state: WorldState) => {
       state.input = ""
       break;
     case "r":
-      state.current = SCREEN_IDS.guild_roster;
+      open_screen(state, SCREEN_IDS.guild_roster)
       state.input = ""
       break;
     case "s":
@@ -57,7 +60,7 @@ const _handle_input = (input: string, state: WorldState) => {
         state.input = ""
         break;
       }
-      state.current = SCREEN_IDS.dungeon_combat;
+      open_screen(state, SCREEN_IDS.dungeon_combat)
       state.input = ""
       break;
     default:
@@ -93,7 +96,7 @@ const assembly_area = (state: WorldState) => {
   console.log("press 'j' and 'k' to navigate ↑ and ↓");
   console.log("press 'r' to assing members from roster");
   if (_validate(state)) {
-    console.log('gray', "press 's' to send off the party");
+    console.log("press 's' to send off the party");
   } else {
     console.log(styleText('gray', "press 's' to send off the party"));
   }

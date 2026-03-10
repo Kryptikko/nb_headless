@@ -1,12 +1,17 @@
 import type { Character } from "./Character";
 
+export const _empty_screen_fn = (_state: WorldState): void => { }
 export enum SCREEN_IDS {
   home,
   dungeon_combat,
   assembly_area,
   guild_roster
 }
-type ScreenFn = (state: WorldState) => void;
+export type Screen = {
+  init: (state: WorldState) => void;
+  process: (state: WorldState) => void;
+  clear: (state: WorldState) => void;
+}
 
 export type WorldState = {
   // render state
@@ -14,7 +19,6 @@ export type WorldState = {
   game_now: number,
   delta: number,
   current: SCREEN_IDS, // TODO: make it an enum
-  previous: SCREEN_IDS,
   input: string,
   // game state
   // guild_bank: Object

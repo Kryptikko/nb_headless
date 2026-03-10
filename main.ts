@@ -1,21 +1,18 @@
 import _ from "lodash"
 import type { WorldState } from './types/WorldState';
 import { SCREEN_IDS } from './types/WorldState';
+import { SCREENS } from './screen/';
 import { StringDecoder } from "string_decoder";
-import home_screen from './screen/home'
-import combat_screen from './screen/combat'
-import { Cleave, Blizzard, FireBolt } from './data/abilities.ts'
-import assembly_area from "./screen/assembly_area.ts";
-import roster from "./screen/roster.ts";
+import { ABILITY } from "./types/Ability.ts";
 
 const _decoder = new StringDecoder('utf8');
 const RENDER_RATE = 1000 / 24 // 24 fps
+
 
 const state: WorldState = {
   delta: 0,
   game_now: 0,
   game_start: 0,
-  previous: SCREEN_IDS.home,
   current: SCREEN_IDS.home,
   party: [],
   input: "",
@@ -32,8 +29,7 @@ const state: WorldState = {
       def: 1,
       mgc: 0,
       ini: 2,
-      ability_primary: Cleave,
-      status: []
+      ability_primary: ABILITY.CLEAVE,
     },
     'wiz1': {
       id: 'wiz1',
@@ -46,8 +42,7 @@ const state: WorldState = {
       def: 1,
       mgc: 0,
       ini: 1,
-      ability_primary: Blizzard,
-      status: []
+      ability_primary: ABILITY.BLIZZARD,
     },
     'sor1': {
       id: 'sor1',
@@ -60,32 +55,17 @@ const state: WorldState = {
       def: 1,
       mgc: 0,
       ini: 1,
-      ability_primary: FireBolt,
-      status: []
+      ability_primary: ABILITY.FIREBOLT,
     }
   }
 }
 
-type ScreenFn = (state: WorldState) => void;
-const _empty_fn = () => { }
-const SCREENS: Record<SCREEN_IDS, ScreenFn> = {
-  [SCREEN_IDS.home]: home_screen,
-  [SCREEN_IDS.dungeon_combat]: combat_screen,
-  [SCREEN_IDS.assembly_area]: assembly_area,
-  [SCREEN_IDS.guild_roster]: roster
-}
 console.log("nb> q  →  exit\n");
 
 const handle_input = (input: string, state: WorldState) => {
   //TODO: check for valid inputs
   // console.log(input)
   state.input = input
-  // render_frame(state)
-}
-const render_frame = (state: WorldState) => {
-  process.stdout.write('\x1b[2J\x1b[H'); // ANSI clear + home
-  SCREENS[state.current](state)
-  loop()
 }
 
 const render = console.log
@@ -107,7 +87,7 @@ const loop = () => {
   state.game_now = now - state.game_start;
   state.delta = now - last_frame
   next_frame = next_frame + 100 // RENDER_RATE
-  SCREENS[state.current](state)
+  SCREENS[state.current].process(state)
   state.input = ""
   process.stdout.write('\x1b[2J\x1b[H'); // ANSI clear + home
   render(buffer.join('\n'))
@@ -130,10 +110,5 @@ process.stdin.on('data', (data) => {
   }
   handle_input(key, state)
 })
-
-// Know when child is done
-process.on('close', (code) => {
-  console.log(`Child process exited with code ${code}`);
-});
 
 process.stdin.resume();
