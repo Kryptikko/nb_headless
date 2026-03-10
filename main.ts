@@ -87,6 +87,13 @@ const render_frame = (state: WorldState) => {
   SCREENS[state.current](state)
   loop()
 }
+
+const render = console.log
+let buffer: Array<string> = [];
+console.log = (line: string) => {
+  buffer.push(line);
+}
+
 // render _frame
 // handle input
 // update state
@@ -98,9 +105,11 @@ const loop = () => {
   state.game_now = now - state.game_start;
   state.delta = now - last_frame
   next_frame = next_frame + 100 // RENDER_RATE
-  process.stdout.write('\x1b[2J\x1b[H'); // ANSI clear + home
   SCREENS[state.current](state)
   state.input = ""
+  process.stdout.write('\x1b[2J\x1b[H'); // ANSI clear + home
+  render(buffer.join('\n'))
+  buffer = []
   // render 
   // adjust frame offset
   last_frame = Date.now()
