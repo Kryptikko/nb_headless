@@ -30,12 +30,40 @@ export enum TARGET_TYPE {
   FRIEND,
 }
 
+export type CombatEffectContext = {
+  id: string // ?
+  cooldown_now: number,
+  effect: COMBAT_EFFECT,
+  ability: string,
+  source: string, // caster id
+  target: string, // target id
+  // dots
+  duration: number,
+  tickCount: number,
+}
+type CombatLog = {
+
+}
+type CombatEffectLog = {
+
+}
+
+export type CombatEffect = {
+  apply: (source: Character, target: Character, ability: CombatAbility) => void
+  process: (source: Character, target: Character, ability: CombatAbility) => void
+  clear: (source: Character, target: Character, ability: CombatAbility) => void
+}
+
 export type CombatAbility = {
   id: string
   display_name: string
+  //TODO: flags, crit, scaling(scaling should be on effect?), damage type
   // visual_icon: string //texture icon
   target_type: TARGET_TYPE
-  target_count: number
+  target_count: number,
+  cooldown: number,
+  base_power: number,
+  effects: Array<COMBAT_EFFECT>
   // school. physical, magic, fire, water etc
   // flags: 
   // recovery/cooldown
@@ -47,17 +75,6 @@ export type CombatAbility = {
   // post_effect
   // fail_effect
   // gear
-  cooldown: number,
-  cooldown_now: number,
-  base_power: number,
-  effects: Array<COMBAT_EFFECT>
-}
-
-export type CombatStatusEffet = {
-  id: string
-  source: string // caster id
-  visual: string
-  ability: CombatAbility
 }
 
 export type Character = {
@@ -75,10 +92,9 @@ export type Character = {
   def: number
   mgc: number
   ini: number
-  ability_primary: CombatAbility
+  ability_primary: CombatAbility // move to just an id
   // combat overhead
   position?: COMBAT_POSITION
-  // combat_effects: Array<CombatEffect>
-  // ability_passive: CombatAbility
-  status: Array<CombatStatusEffet>
+  current_ability: CombatEffectContext
+  active_effect: Array<CombatEffectContext>
 }

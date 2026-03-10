@@ -1,6 +1,6 @@
 import _ from "lodash"
 import { COMBAT_EFFECT } from '../types/Character.ts'
-import type { Character, CombatAbility } from '../types/Character.ts'
+import type { Character, CombatAbility, CombatEffect } from '../types/Character.ts'
 import cast_bar from "../screen/components/cast_bar.ts"
 import { Burning } from "../data/status.ts"
 // type CombatEffectHandler = (caster: Character, target: Character, ability: CombatAbility) => string
@@ -38,11 +38,17 @@ const apply_burning = (caster: Character, target: Character, ability: CombatAbil
   }
   return '';
 }
-
-export default {
-  [COMBAT_EFFECT.PHYSICAL_DAMAGE]: do_physical_damage,
-  [COMBAT_EFFECT.MAGIC_DAMAGE]: do_magic_damage,
-  [COMBAT_EFFECT.HEAL]: do_heal,
-  [COMBAT_EFFECT.BURN]: do_burn,
-  [COMBAT_EFFECT.BURNING]: apply_burning,
+const _noop = () => { }
+const _physical_damage: CombatEffect = {
+  apply: (source: Character, target: Character) => {
+  },
+  process: (_source: Character, _target: Character) => _noop
 }
+const repo: Record<COMBAT_EFFECT, CombatEffect> = {
+  [COMBAT_EFFECT.PHYSICAL_DAMAGE]: _physical_damage,
+  [COMBAT_EFFECT.MAGIC_DAMAGE]: _physical_damage,
+  [COMBAT_EFFECT.HEAL]: _physical_damage,
+  [COMBAT_EFFECT.BURN]: _physical_damage,
+  [COMBAT_EFFECT.BURNING]: _physical_damage,
+}
+export default repo;

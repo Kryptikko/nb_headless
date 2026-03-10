@@ -104,20 +104,9 @@ const CombatScreen = (state: WorldState) => {
     _process(state, _local_state)
 
   // RENDER
-  const template = `
-${styleText('gray', '[Start Dungeon Group]')}
-=== Dungeon floor 1 ===
-`
-  // console.log(`DEBUG - Step: ${_local_state.turn} | Delta: ${state.delta} | FPS: ${Math.ceil(1000 / state.delta)}`);
-  console.log(template);
-  // _local_state.party.map(ch => {
-  //   console.log(character_status(ch))
-  //   console.log(ability_cast_bar(ch.ability_primary))
-  // })
-  // _local_state.enemies.map(ch => {
-  //   console.log(character_status(ch))
-  //   console.log(ability_cast_bar(ch.ability_primary))
-  // })
+  const header = styleText('gray', '[Start Dungeon Group]')
+  const sub_header = `=== ${dungeon_floor_1.display_name} ===`
+  const body: Array<string> = [];
   let len = Math.max(_local_state.party.length, _local_state.enemies.length)
   let ch: Character
   for (let index = 0; index < len; index++) {
@@ -127,7 +116,7 @@ ${styleText('gray', '[Start Dungeon Group]')}
     if (ch) {
       row += character_status(ch)
       srow += ability_cast_bar(ch.ability_primary)
-      srow += status_bar(ch)
+      srow += _.padStart(status_bar(ch), 20, ' ')
     }
     row = _.padEnd(row, 46, " ")
     srow = _.padEnd(srow, 46, " ")
@@ -135,15 +124,17 @@ ${styleText('gray', '[Start Dungeon Group]')}
     if (ch) {
       row += character_status(ch)
       srow += ability_cast_bar(ch.ability_primary)
-      srow += status_bar(ch)
+      srow += _.padStart(status_bar(ch), 17, ' ')
     }
-    console.log(row)
-    console.log(srow)
+    body.push(row)
+    body.push(srow)
   }
-  // Warrior  👨‍🦰  [█████▌    ] 90/150   Goblin1 🧝‍♂️ [███▌      ] 35/100  💥-28!
-  // Mage     🧙‍♂️  [███▌      ] 45/80    Goblin2 🧝‍♂️ [█▌        ] 12/100  ✨-22!
-  // Rogue    🗡️  [███████▌  ] 110/120  Goblin3 🧝‍♂️ [          ] 0/100  ☠️
-  // Tank     🛡️  [█████████ ] 140/140
+  const dynamic_width = _.maxBy(body, (line) => line.length)?.length || 0
+
+  console.log(dynamic_width)
+  console.log(header);
+  console.log(_.pad(sub_header, dynamic_width, ' ') + '\n');
+  console.log(body.join('\n'))
   console.log(`
 
 [Turn Log]`);
