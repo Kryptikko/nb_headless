@@ -1,6 +1,7 @@
 import { styleText } from "node:util";
 import { SCREEN_IDS, type WorldState, type Screen, _empty_screen_fn } from '../types/WorldState';
 import { open_screen } from "../controller/screen";
+import { render } from "../lib/render";
 
 const process = (state: WorldState) => {
   const template = `
@@ -10,7 +11,7 @@ ${styleText('gray', '[Home State]')}
 [${styleText('underline', 'A')}ssembly Area]
 [${styleText('underline', 'R')}oster] 
 `
-  console.log(template);
+  render(template);
   switch (state.input.toLocaleLowerCase()) {
     case "s":
       open_screen(state, SCREEN_IDS.dungeon_combat)

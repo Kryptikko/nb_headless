@@ -7,6 +7,7 @@ import container from "./components/container.ts";
 import { dungeon_floor_1, dungeon_floor_2 } from "../data/encounters.ts";
 import get_ability from "../data/abilities.ts";
 import { open_screen } from "../controller/screen.ts";
+import { render } from "../lib/render.ts";
 
 
 const CharacterPreview = (ch?: Character): string => {
@@ -89,16 +90,16 @@ const assembly_area = (state: WorldState) => {
   const body = state.party.map((ch, idx) => PartySlot(state.roster[ch], idx == _state.focus, idx == _state.selection)).join('\n')
   const footer = CharacterPreview(_.find(_state.party, ['id', _state.selection]));
   // render
-  console.log(header);
-  console.log(container(body));
-  console.log(encoutner_selection(state));
-  console.log(footer);
-  console.log("press 'j' and 'k' to navigate ↑ and ↓");
-  console.log("press 'r' to assing members from roster");
+  render(header);
+  render(container(body));
+  render(encoutner_selection(state));
+  render(footer);
+  render("press 'j' and 'k' to navigate ↑ and ↓");
+  render("press 'r' to assing members from roster");
   if (_validate(state)) {
-    console.log("press 's' to send off the party");
+    render("press 's' to send off the party");
   } else {
-    console.log(styleText('gray', "press 's' to send off the party"));
+    render(styleText('gray', "press 's' to send off the party"));
   }
 
   return state

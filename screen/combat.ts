@@ -9,6 +9,7 @@ import status_bar from "./components/status_bar.ts";
 import { ABILITY, TARGET_TYPE, type CombatAbilityContext, type CombatEffect } from "../types/Ability.ts";
 import get_ability from "../data/abilities.ts";
 import ability_handler_repo from "../combat_effect/index.ts";
+import { render } from "../lib/render.ts";
 
 enum COMBAT_RESULT {
   ONGOING,
@@ -49,11 +50,6 @@ const _init = (state: WorldState) => {
     aggr[enemy.id] = enemy
     return aggr
   }, _local_state.actors)
-
-  if (_local_state.winner != COMBAT_RESULT.ONGOING) {
-    console.log('COMBAT OVER WINNER IS')
-    _local_state.winner == COMBAT_RESULT.ATTACKER_WIN ? console.log('PARTY') : console.log('ENEMIES')
-  }
 }
 
 const _is_combat_over = (): COMBAT_RESULT => {
@@ -79,7 +75,7 @@ const _get_ability_context = (caster: Character, ability_id: ABILITY): CombatAbi
 
 const _process_cast = (caster: Character, context: CombatAbilityContext) => {
 
-  console.log('processing an ability cast')
+  render('processing an ability cast')
   const ability = get_ability(context.ability_id)
   let targets: Array<string>
   switch (ability.target_type) {
@@ -104,6 +100,7 @@ const _process_cast = (caster: Character, context: CombatAbilityContext) => {
       _.forEach(ability.effects, (effect: CombatEffect) => {
         var handler = ability_handler_repo[effect.handler]
         handler.apply(caster, target, effect)
+        _local_state.log.push(`${caster.display_name} uses ${ability.display_name} on ${target.display_name}`)
         // the effet fn applies the changes to the targets
         // _local_state.log.push(combat_effect[effect](member, target, member.ability_primary))
       })
@@ -112,22 +109,21 @@ const _process_cast = (caster: Character, context: CombatAbilityContext) => {
 }
 
 const _process = (wstate: WorldState, lstate: CombatState) => {
-  console.log('processing ')
-  _(_local_state.actors)
-    .values()
-    .forEach((member: Character) => {
-      // start casting if its not
-      const current_cast = _.get(_ability_repository, member.id) || _get_ability_context(member, member.ability_primary)
-      current_cast.cooldown_now -= wstate.delta
-      // cast ability
-      if (current_cast.cooldown_now <= 0) {
-        _process_cast(member, current_cast)
-        lstate.winner = _is_combat_over()
-      }
-      _.set(_ability_repository, member.id, current_cast)
-    })
+  const actors = _.values(_local_state.actors)
+  actors.forEach((member: Character) => {
+    // start casting if its not
+    const current_cast = _.get(_ability_repository, member.id) || _get_ability_context(member, member.ability_primary)
+    current_cast.cooldown_now -= wstate.delta
+    // cast ability
+    if (current_cast.cooldown_now <= 0) {
+      _process_cast(member, current_cast)
+      lstate.winner = _is_combat_over()
+      // break if ther is a winner?
+    }
+    _.set(_ability_repository, member.id, current_cast)
+  })
+  console.log('DEBUG - processing ', _ability_repository)
 }
-
 // combat screen needs to be a function that returns a render ?
 const CombatScreen = (state: WorldState) => {
   // TODO: 
@@ -136,6 +132,11 @@ const CombatScreen = (state: WorldState) => {
   // run simulation
   // render
 
+  if (_local_state.winner != COMBAT_RESULT.ONGOING) {
+    render('COMBAT OVER WINNER IS')
+    _local_state.winner == COMBAT_RESULT.ATTACKER_WIN ? render('PARTY') : render('ENEMIES')
+  }
+  console.log('DEBUG starting processing ', _.keys(_local_state.actors))
   if (_local_state.winner == COMBAT_RESULT.ONGOING)
     _process(state, _local_state)
 
@@ -152,38 +153,37 @@ const CombatScreen = (state: WorldState) => {
       _local_state.actors,
       _.get(_local_state.attacker, index, -1)
     )
-    // ch = _.get(_local_state.actors, _.get(_local_state.attacker, index))
+
     if (ch) {
       row += character_status(ch)
-      srow += ability_cast_bar(ch.ability_primary)
-      srow += _.padStart(status_bar(ch), 20, ' ')
+      // srow += ability_cast_bar(ch.ability_primary)
+      // srow += _.padStart(status_bar(ch), 20, ' ')
     }
     row = _.padEnd(row, 46, " ")
     srow = _.padEnd(srow, 46, " ")
-    // ch = _.get(_local_state.actors, _.get(_local_state.defender, index))
+
     ch = _.get(
       _local_state.actors,
       _.get(_local_state.defender, index, -1)
     )
     if (ch) {
       row += character_status(ch)
-      srow += ability_cast_bar(ch.ability_primary)
-      srow += _.padStart(status_bar(ch), 17, ' ')
+      // srow += ability_cast_bar(ch.ability_primary)
+      // srow += _.padStart(status_bar(ch), 17, ' ')
     }
     body.push(row)
     body.push(srow)
   }
   const dynamic_width = _.maxBy(body, (line) => line.length)?.length || 0
 
-  console.log(dynamic_width)
-  console.log(header);
-  console.log(_.pad(sub_header, dynamic_width, ' ') + '\n');
-  console.log(body)
-  console.log(body.join('\n'))
-  console.log(`
+  render(dynamic_width + "")
+  render(header);
+  render(_.pad(sub_header, dynamic_width, ' ') + '\n');
+  render(body.join('\n'))
+  render(`
 
 [Turn Log]`);
-  _.takeRight(_local_state.log, 3).map(log => console.log(log))
+  _.takeRight(_local_state.log, 3).map(log => render(log))
   return state
 }
 const screen: Screen = {

@@ -5,6 +5,7 @@ import type { Character } from "../types/Character";
 import container from "./components/container.ts";
 import get_ability from "../data/abilities.ts";
 import { open_screen } from "../controller/screen.ts";
+import { render } from "../lib/render.ts";
 
 // const PARTY_SIZE_LIMIT = 4
 type RosterState = {
@@ -69,7 +70,7 @@ const _handle_input = (state: WorldState) => {
 
 const roster = (state: WorldState) => {
   _handle_input(state)
-  const header = `[Guild Roster][${state.roster.length} / 100]`
+  const header = `[Guild Roster][${_.keys(state.roster).length} / 100]`
   const body = Object.values(state.roster)
     .map((ch, idx) => RosterRow(ch, idx == _state.focus, state.party.includes(ch.id)))
     .join('\n')
@@ -77,11 +78,12 @@ const roster = (state: WorldState) => {
   const footer = MemberPreview(focused_character_id);
   // render
   console.log('DEBUG LINE - ', _state.focus, state.party);
-  console.log(header);
-  console.log(container(body));
-  console.log(footer);
-  console.log("press 'j' and 'k' to navigate ↑ and ↓");
-  console.log("press 'a' to assemble a party");
+
+  render(header);
+  render(container(body));
+  render(footer);
+  render("press 'j' and 'k' to navigate ↑ and ↓");
+  render("press 'a' to assemble a party");
   return state
 }
 export default roster
