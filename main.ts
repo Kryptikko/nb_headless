@@ -90,6 +90,8 @@ const render_frame = (state: WorldState) => {
 
 const render = console.log
 let buffer: Array<string> = [];
+// 🐒 patch 
+// TODO: omg fix dis 
 console.log = (line: string) => {
   buffer.push(line);
 }
@@ -110,10 +112,10 @@ const loop = () => {
   process.stdout.write('\x1b[2J\x1b[H'); // ANSI clear + home
   render(buffer.join('\n'))
   buffer = []
-  // render 
-  // adjust frame offset
+  // TODO: test and skip a frame if the compuation takes more then the target FPS
+  // making up for computation so the frame times are consistent
   last_frame = Date.now()
-  setTimeout(loop, Math.max(0, next_frame - Date.now()))
+  setTimeout(loop, Math.max(0, next_frame - last_frame))
 }
 state.game_start = Date.now()
 loop()
