@@ -4,11 +4,10 @@ import { SCREEN_IDS } from './types/WorldState';
 import { SCREENS } from './screen/';
 import { StringDecoder } from "string_decoder";
 import { ABILITY } from "./types/Ability.ts";
-import { clear_render_buffer, get_render_buffer } from "./lib/render.ts";
+import { render_buffer_flush } from "./lib/render.ts";
 
 const _decoder = new StringDecoder('utf8');
 const RENDER_RATE = 1000 / 24 // 24 fps
-
 
 const state: WorldState = {
   delta: 0,
@@ -69,23 +68,16 @@ const handle_input = (input: string, state: WorldState) => {
   state.input = input
 }
 
-// render _frame
-// handle input
-// update state
-// loop
 let next_frame = Date.now()
-let last_frame = Date.now()
+let last_frame = next_frame
 const loop = () => {
   const now = Date.now()
   state.game_now = now - state.game_start;
   state.delta = now - last_frame
   next_frame = next_frame + 100 // RENDER_RATE
   SCREENS[state.current].process(state)
-  // do not propage inputs if they are not handled
   state.input = ""
-  process.stdout.write('\x1b[2J\x1b[H'); // ANSI clear + home
-  console.log(get_render_buffer())
-  clear_render_buffer()
+  render_buffer_flush()
   // TODO: test and skip a frame if the compuation takes more then the target FPS
   // making up for computation so the frame times are consistent
   last_frame = Date.now()
@@ -97,8 +89,8 @@ loop()
 process.stdin.setRawMode(true)
 process.stdin.on('data', (data) => {
   var key = _decoder.write(data)
-  // console.clear()
   if (key == "q") {
+    // console.clear()
     console.log("\nBye!");
     process.exit(0)
   }

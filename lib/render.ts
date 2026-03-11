@@ -2,7 +2,11 @@ let buffer: Array<string> = []
 export const render = (line: string) => {
   buffer.push(line)
 }
-export const clear_render_buffer = () => {
+export const render_buffer_clear = () => {
   buffer = []
 }
-export const get_render_buffer = () => buffer.join('\n')
+export const render_buffer_flush = () => {
+  process.stdout.write('\x1b[2J\x1b[H'); // ANSI clear + home
+  console.log(buffer.join('\n'))
+  render_buffer_clear()
+}

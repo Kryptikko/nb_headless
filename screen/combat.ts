@@ -21,6 +21,7 @@ type CombatState = {
   last_turn_at: number
   turn: number
   log: Array<string>
+  stats: Array<Object>
   actors: Record<string, Character>
   attacker: Array<string>
   defender: Array<string>
@@ -30,6 +31,7 @@ let _local_state: CombatState = {
   last_turn_at: 1000,
   turn: 0,
   log: [],
+  stats: [],
   actors: {},
   attacker: [],
   defender: [],
@@ -37,25 +39,25 @@ let _local_state: CombatState = {
 }
 
 const _init = (state: WorldState) => {
-  _local_state.attacker = state.party
-  _local_state.actors = _.reduce(_local_state.attacker,
+  _local_state.actors = _.reduce(state.party,
     (aggr, id: string) => {
       aggr[id] = _.get(state.roster, id)
       return aggr
     }, _local_state.actors)
-
+  _local_state.attacker = _.sortBy(state.party, id => _.get(_local_state.actors, id).ini).reverse()
   _.reduce(dungeon_floor_1.enemies, (aggr, enemy) => {
     _local_state.defender.push(enemy.id)
     // TODO clone deep
-    aggr[enemy.id] = enemy
+    aggr[enemy.id] = _.cloneDeep(enemy);
     return aggr
   }, _local_state.actors)
+  _local_state.defender = _.sortBy(_local_state.defender, id => _.get(_local_state.actors, id).ini).reverse()
 }
 
 const _is_combat_over = (): COMBAT_RESULT => {
-  if (_.find(_local_state.attacker, id => _.get(_local_state.actors, id).hp_now > 0))
+  if (!_.find(_local_state.attacker, id => _.get(_local_state.actors, id).hp_now > 0))
     return COMBAT_RESULT.DEFENDER_WIN;
-  if (_.find(_local_state.defender, id => _.get(_local_state.actors, id).hp_now > 0))
+  if (!_.find(_local_state.defender, id => _.get(_local_state.actors, id).hp_now > 0))
     return COMBAT_RESULT.ATTACKER_WIN;
 
   return COMBAT_RESULT.ONGOING
@@ -63,14 +65,15 @@ const _is_combat_over = (): COMBAT_RESULT => {
 const _ability_repository: Record<string, CombatAbilityContext> = {}
 const _get_ability_context = (caster: Character, ability_id: ABILITY): CombatAbilityContext => {
   const ability = get_ability(ability_id)
-  return {
+  render('qj mi kura = ' + ability.cooldown)
+  return Object.assign({}, {
     id: [caster.id, ability_id].join('|'),
     ability_id: ability_id,
     source: caster.id,
     target: "",
     // target: string // target id
     cooldown_now: ability.cooldown
-  }
+  })
 }
 
 const _process_cast = (caster: Character, context: CombatAbilityContext) => {
@@ -109,19 +112,20 @@ const _process_cast = (caster: Character, context: CombatAbilityContext) => {
 }
 
 const _process = (wstate: WorldState, lstate: CombatState) => {
-  const actors = _.values(_local_state.actors)
-  actors.forEach((member: Character) => {
-    // start casting if its not
-    const current_cast = _.get(_ability_repository, member.id) || _get_ability_context(member, member.ability_primary)
-    current_cast.cooldown_now -= wstate.delta
-    // cast ability
-    if (current_cast.cooldown_now <= 0) {
-      _process_cast(member, current_cast)
-      lstate.winner = _is_combat_over()
-      // break if ther is a winner?
-    }
-    _.set(_ability_repository, member.id, current_cast)
-  })
+  _.values(_local_state.actors)
+    .forEach((member: Character) => {
+      // start casting if its not
+      let current_cast = _.get(_ability_repository, member.id) || _get_ability_context(member, member.ability_primary)
+      current_cast.cooldown_now -= wstate.delta
+      if (current_cast.cooldown_now <= 0) {
+        _process_cast(member, current_cast)
+        // start a new cast when this one is done,
+        // alternatily just reset the cooldown_now but this way we're setup to have multiple ability choice
+        current_cast = _get_ability_context(member, member.ability_primary)
+        lstate.winner = _is_combat_over()
+      }
+      _.set(_ability_repository, member.id, current_cast)
+    })
   console.log('DEBUG - processing ', _ability_repository)
 }
 // combat screen needs to be a function that returns a render ?
@@ -136,7 +140,6 @@ const CombatScreen = (state: WorldState) => {
     render('COMBAT OVER WINNER IS')
     _local_state.winner == COMBAT_RESULT.ATTACKER_WIN ? render('PARTY') : render('ENEMIES')
   }
-  console.log('DEBUG starting processing ', _.keys(_local_state.actors))
   if (_local_state.winner == COMBAT_RESULT.ONGOING)
     _process(state, _local_state)
 
@@ -156,7 +159,7 @@ const CombatScreen = (state: WorldState) => {
 
     if (ch) {
       row += character_status(ch)
-      // srow += ability_cast_bar(ch.ability_primary)
+      srow += ability_cast_bar(_.get(_ability_repository, ch.id))
       // srow += _.padStart(status_bar(ch), 20, ' ')
     }
     row = _.padEnd(row, 46, " ")
@@ -168,7 +171,7 @@ const CombatScreen = (state: WorldState) => {
     )
     if (ch) {
       row += character_status(ch)
-      // srow += ability_cast_bar(ch.ability_primary)
+      srow += ability_cast_bar(_.get(_ability_repository, ch.id))
       // srow += _.padStart(status_bar(ch), 17, ' ')
     }
     body.push(row)
@@ -176,13 +179,12 @@ const CombatScreen = (state: WorldState) => {
   }
   const dynamic_width = _.maxBy(body, (line) => line.length)?.length || 0
 
-  render(dynamic_width + "")
   render(header);
   render(_.pad(sub_header, dynamic_width, ' ') + '\n');
   render(body.join('\n'))
   render(`
 
-[Turn Log]`);
+[Turn Log] 3/${_local_state.log.length}`);
   _.takeRight(_local_state.log, 3).map(log => render(log))
   return state
 }

@@ -1,5 +1,6 @@
-import type { CombatAbility } from "../../types/Character"
-import type { WorldState } from "../../types/WorldState"
+import _ from "lodash"
+import get_ability from "../../data/abilities"
+import type { CombatAbilityContext } from "../../types/Ability"
 
 const TPL_EMPTY = " "
 const TPL_FULL = "="
@@ -12,10 +13,11 @@ const TPL_FULL = "="
 // ■■■■■□□□□□
 
 
-export const ability_cast_bar = (ability: CombatAbility) => {
+export const ability_cast_bar = (ctx: CombatAbilityContext) => {
+  const ability = get_ability(ctx.ability_id)
   let template = "          "
-  let percent = Math.ceil((ability.cooldown_now / ability.cooldown) * 10)
-  template = TPL_FULL.repeat(percent - 1) + TPL_EMPTY.repeat(10 - percent)
+  let percent = _.clamp(Math.ceil((ctx.cooldown_now / ability.cooldown) * 10), 0, 10)
+  template = TPL_FULL.repeat(percent) + TPL_EMPTY.repeat(10 - percent)
   return '[' + template + ']';
 
 }

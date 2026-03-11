@@ -50,7 +50,6 @@ const _physical_damage: CombatEffectHandler = {
     //   return `${source.display_name} uses ${ability.display_name} on ${target.display_name} for 💥 -${damage}!`
   },
   process: _noop,
-  clear: _noop
 }
 
 const _apply_dot: CombatEffectHandler = {
@@ -67,10 +66,9 @@ const _apply_dot: CombatEffectHandler = {
     target.hp_now -= _.clamp(damage, 0, target.hp_now)
     //   return `${source.display_name} uses ${ability.display_name} on ${target.display_name} for 💥 -${damage}!`
   },
-  process: (source: Character, target: Character, context: CombatEffectContext) => {
+  process: (_source: Character, _target: Character, _context: CombatEffectContext) => {
     // 
   },
-  clear: _noop
 }
 
 const ability_handler_repo: Record<COMBAT_EFFECT, CombatEffectHandler> = {
