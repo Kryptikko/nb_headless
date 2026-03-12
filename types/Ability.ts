@@ -1,3 +1,10 @@
+export enum COMBAT_EFFECT_TAGS {
+  CAN_CRIT,
+  CAN_STACK,
+  MAGIC_DAMAGE,
+  PHYSICAL_DAMAGE,
+}
+
 export enum ABILITY {
   DEFAULT,
   HEALING_WORD,
@@ -30,17 +37,18 @@ export type CombatAbilityContext = BaseContext & {
   ability_id: ABILITY // abiity id can be a composition of source+ability+effec
 }
 
-type CombatEffectBase = {
+export type CombatEffect = {
   handler: COMBAT_EFFECT,
   base_power: number,
-}
-type CombatEffectOverTime = {
-  duration?: number,
-  tick_count?: number,
-  max_stack?: number,
+  tags: Array<COMBAT_EFFECT_TAGS>,
+  duration: number,
+  duration_now: number,
+  tick_count: number,
+  stack: number,
+  max_stack: number,
+  visual?: string
 }
 
-export type CombatEffect = CombatEffectBase & CombatEffectOverTime
 export type CombatEffectContext = BaseContext & CombatEffect
 
 export type CombatAbility = {

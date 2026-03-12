@@ -3,7 +3,7 @@ import get_ability from "../../data/abilities"
 import type { CombatAbilityContext } from "../../types/Ability"
 
 const TPL_EMPTY = " "
-const TPL_FULL = "="
+const TPL_FULL = "-"
 // const TPL_EMPTY = "░"
 // const TPL_FULL = "█"
 // HP 189 ▰▰▰▰▰▰▰▰▰▰▱▱  90%

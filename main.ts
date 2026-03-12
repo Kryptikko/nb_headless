@@ -30,6 +30,7 @@ const state: WorldState = {
       mgc: 0,
       ini: 2,
       ability_primary: ABILITY.CLEAVE,
+      active_effect: []
     },
     'wiz1': {
       id: 'wiz1',
@@ -38,11 +39,12 @@ const state: WorldState = {
       xp: 0,
       hp_max: 60,
       hp_now: 60,
-      att: 3,
+      att: 0,
       def: 1,
-      mgc: 0,
+      mgc: 3,
       ini: 1,
       ability_primary: ABILITY.BLIZZARD,
+      active_effect: []
     },
     'sor1': {
       id: 'sor1',
@@ -51,11 +53,12 @@ const state: WorldState = {
       xp: 0,
       hp_max: 60,
       hp_now: 60,
-      att: 3,
+      att: 1,
       def: 1,
-      mgc: 0,
+      mgc: 2,
       ini: 1,
       ability_primary: ABILITY.FIREBOLT,
+      active_effect: []
     }
   }
 }
@@ -76,8 +79,8 @@ const loop = () => {
   state.delta = now - last_frame
   next_frame = next_frame + 100 // RENDER_RATE
   SCREENS[state.current].process(state)
-  state.input = ""
   render_buffer_flush()
+  state.input = ""
   // TODO: test and skip a frame if the compuation takes more then the target FPS
   // making up for computation so the frame times are consistent
   last_frame = Date.now()

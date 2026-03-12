@@ -65,7 +65,6 @@ const _is_combat_over = (): COMBAT_RESULT => {
 const _ability_repository: Record<string, CombatAbilityContext> = {}
 const _get_ability_context = (caster: Character, ability_id: ABILITY): CombatAbilityContext => {
   const ability = get_ability(ability_id)
-  render('qj mi kura = ' + ability.cooldown)
   return Object.assign({}, {
     id: [caster.id, ability_id].join('|'),
     ability_id: ability_id,
@@ -78,7 +77,6 @@ const _get_ability_context = (caster: Character, ability_id: ABILITY): CombatAbi
 
 const _process_cast = (caster: Character, context: CombatAbilityContext) => {
 
-  render('processing an ability cast')
   const ability = get_ability(context.ability_id)
   let targets: Array<string>
   switch (ability.target_type) {
@@ -113,7 +111,12 @@ const _process_cast = (caster: Character, context: CombatAbilityContext) => {
 
 const _process = (wstate: WorldState, lstate: CombatState) => {
   _.values(_local_state.actors)
+    .filter((ch) => ch.hp_now > 0)
     .forEach((member: Character) => {
+      _.forEach(member.active_effect, (effect) => {
+        var handler = ability_handler_repo[effect.handler]
+        handler.process(wstate.delta, _.get(lstate.actors, effect.source), member, effect)
+      });
       // start casting if its not
       let current_cast = _.get(_ability_repository, member.id) || _get_ability_context(member, member.ability_primary)
       current_cast.cooldown_now -= wstate.delta
@@ -126,7 +129,6 @@ const _process = (wstate: WorldState, lstate: CombatState) => {
       }
       _.set(_ability_repository, member.id, current_cast)
     })
-  console.log('DEBUG - processing ', _ability_repository)
 }
 // combat screen needs to be a function that returns a render ?
 const CombatScreen = (state: WorldState) => {
@@ -160,7 +162,7 @@ const CombatScreen = (state: WorldState) => {
     if (ch) {
       row += character_status(ch)
       srow += ability_cast_bar(_.get(_ability_repository, ch.id))
-      // srow += _.padStart(status_bar(ch), 20, ' ')
+      srow += _.padStart(status_bar(ch), 20, ' ')
     }
     row = _.padEnd(row, 46, " ")
     srow = _.padEnd(srow, 46, " ")
@@ -172,7 +174,7 @@ const CombatScreen = (state: WorldState) => {
     if (ch) {
       row += character_status(ch)
       srow += ability_cast_bar(_.get(_ability_repository, ch.id))
-      // srow += _.padStart(status_bar(ch), 17, ' ')
+      srow += _.padStart(status_bar(ch), 17, ' ')
     }
     body.push(row)
     body.push(srow)

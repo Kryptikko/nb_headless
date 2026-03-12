@@ -13,6 +13,7 @@ const _default_mob: Character = {
   mgc: 1,
   ini: 2,
   ability_primary: ABILITY.MELEE,
+  active_effect: []
 }
 export const Goblin: Character = {
   ..._default_mob,

@@ -2,7 +2,7 @@ import type { ABILITY, CombatEffect, CombatEffectContext } from "./Ability"
 
 export type CombatEffectHandler = {
   apply: (source: Character, target: Character, context: CombatEffect) => void
-  process: (source: Character, target: Character, context: CombatEffect) => void
+  process: (delta: number, source: Character, target: Character, context: CombatEffect) => void
 }
 
 export type Character = {
@@ -23,5 +23,5 @@ export type Character = {
   ability_primary: ABILITY // move to just an id
   // combat overhead
   // ability_current: CombatEffectContext
-  active_effect?: Array<CombatEffectContext>
+  active_effect: Array<CombatEffectContext>
 }

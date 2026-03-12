@@ -18,21 +18,26 @@ const Blizzard: CombatAbility = Object.freeze({
   effects: [{
     handler: COMBAT_EFFECT.MAGIC_DAMAGE,
     base_power: 1,
+    tags: [],
+    duration: 0,
+    duration_now: 0,
+    stack: 0,
+    max_stack: 0
   }],
   cooldown: 4000
 })
-const HealingWord: CombatAbility = Object.freeze({
-  ..._ability_defaults,
-  id: ABILITY.HEALING_WORD,
-  display_name: "Healing Word",
-  target_type: TARGET_TYPE.FRIEND,
-  target_count: 1,
-  effects: [{
-    handler: COMBAT_EFFECT.HEAL,
-    base_power: 1,
-  }],
-  cooldown: 3000
-})
+// const HealingWord: CombatAbility = Object.freeze({
+//   ..._ability_defaults,
+//   id: ABILITY.HEALING_WORD,
+//   display_name: "Healing Word",
+//   target_type: TARGET_TYPE.FRIEND,
+//   target_count: 1,
+//   effects: [{
+//     handler: COMBAT_EFFECT.HEAL,
+//     base_power: 1,
+//   }],
+//   cooldown: 3000
+// })
 const MeleeAttack: CombatAbility = Object.freeze({
   ..._ability_defaults,
   id: ABILITY.MELEE,
@@ -42,6 +47,11 @@ const MeleeAttack: CombatAbility = Object.freeze({
   effects: [{
     handler: COMBAT_EFFECT.PHYSICAL_DAMAGE,
     base_power: 1,
+    tags: [],
+    duration: 0,
+    duration_now: 0,
+    stack: 0,
+    max_stack: 0
   }],
   cooldown: 2000
 })
@@ -54,6 +64,11 @@ const Cleave: CombatAbility = Object.freeze({
   effects: [{
     handler: COMBAT_EFFECT.PHYSICAL_DAMAGE,
     base_power: 1,
+    tags: [],
+    duration: 0,
+    duration_now: 0,
+    stack: 0,
+    max_stack: 0
   }],
   cooldown: 3000
 })
@@ -66,12 +81,21 @@ const FireBolt: CombatAbility = Object.freeze({
   effects: [{
     handler: COMBAT_EFFECT.BURN,
     base_power: 2,
+    tags: [],
+    duration: 0,
+    duration_now: 0,
+    stack: 0,
+    max_stack: 0
   }, {
     handler: COMBAT_EFFECT.BURNING,
     base_power: 1,
     tick_count: 4,
-    duration: 4,
+    tags: [],
+    duration: 2000,
+    duration_now: 0,
     max_stack: 1,
+    stack: 0,
+    visual: "b"
   }],
   cooldown: 3000
 })
@@ -79,7 +103,8 @@ const FireBolt: CombatAbility = Object.freeze({
 const repo: Record<ABILITY, CombatAbility> = Object.freeze({
   [ABILITY.DEFAULT]: _ability_defaults,
   [ABILITY.CLEAVE]: Cleave,
-  [ABILITY.HEALING_WORD]: HealingWord,
+  [ABILITY.HEALING_WORD]: _ability_defaults,
+  // [ABILITY.HEALING_WORD]: HealingWord,
   [ABILITY.BLIZZARD]: Blizzard,
   [ABILITY.MELEE]: MeleeAttack,
   [ABILITY.FIREBOLT]: FireBolt
