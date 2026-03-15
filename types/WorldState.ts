@@ -4,6 +4,8 @@ export const _empty_screen_fn = (_state: WorldState): void => { }
 export enum SCREEN_IDS {
   home,
   dungeon_combat,
+  recruitment,
+  interview,
   assembly_area,
   guild_roster
 }
@@ -25,4 +27,5 @@ export type WorldState = {
   encounter: string,
   party: Array<string>
   roster: { [key: string]: Character }
+  recruitment_pool: Array<Character>
 }

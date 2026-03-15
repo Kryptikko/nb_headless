@@ -4,7 +4,6 @@ export type CombatEffectHandler = {
   apply: (source: Character, target: Character, context: CombatEffect) => void
   process: (delta: number, source: Character, target: Character, context: CombatEffect) => void
 }
-
 export type Character = {
   id: string
   display_name: string // max 10

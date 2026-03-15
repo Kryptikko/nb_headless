@@ -20,6 +20,7 @@ ${styleText('gray', '[Home State]')}
       open_screen(state, SCREEN_IDS.assembly_area)
       break;
     case "e":
+      open_screen(state, SCREEN_IDS.recruitment)
       break;
     case "r":
       open_screen(state, SCREEN_IDS.guild_roster)

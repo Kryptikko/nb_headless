@@ -5,9 +5,9 @@ import _, { max } from "lodash"
 // ┐
 // ┌
 
-export default (body: string, header?: string): string => {
+export default (body: string, header?: string, min_width: number = 0): string => {
   const lines = body.split(`\n`);
-  const max_width = _.chain(lines).map(line => line.length).max().value()
+  const max_width = _.chain(lines).map(line => line.length).concat(header?.length || 0, min_width).max().value()
 
   const head = '┌' + _.padEnd(header, max_width, '─') + '┐'
   const foot = '└' + '─'.repeat(max_width) + '┘'

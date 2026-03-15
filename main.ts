@@ -17,6 +17,7 @@ const state: WorldState = {
   party: [],
   input: "",
   encounter: "",
+  recruitment_pool: [],
   roster: {
     'war1': {
       id: 'war1',
