@@ -8,7 +8,9 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@types/json-logic-js": "^2.0.8",
     "@types/lodash": "^4.17.24",
+    "json-logic-js": "^2.0.5",
     "lodash": "^4.17.23"
   }
 }

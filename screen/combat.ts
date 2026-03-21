@@ -9,7 +9,7 @@ import status_bar from "./components/status_bar.ts";
 import { ABILITY, TARGET_TYPE, type CombatAbilityContext, type CombatEffect } from "../types/Ability.ts";
 import get_ability from "../data/abilities.ts";
 import ability_handler_repo from "../combat_effect/index.ts";
-import { render } from "../lib/render.ts";
+import { render, render_debug } from "../lib/render.ts";
 
 enum COMBAT_RESULT {
   ONGOING,

@@ -1,5 +1,28 @@
 ## TODO 
 ### Tech
+- Relationships V1
+  - define interactions
+  - trigger chance of interactions
+  - trigger interactions
+  - pick trigger targets
+  - interactions affect two target
+  - display interactions
+  - reactive player action
+  - pro-active player action
+- Relationships V2
+  - multi file interaction definitions
+  - more fleshed out descision on which member interact
+  - advanced interactions results
+    - leaving party
+    - leaving guild
+    - getting or losing a modifier tag
+  - interactions propagate
+  - interaction trigger shifts in SYMLOG scale
+  - variant rate of change (some neurotic players are effected by certain interactions more)
+  - variant reactions (just different flavor)
+  - variant reactions depending on SYMLOG scale (?)
+  - dynamic trigger chance?
+- Events V1
 - prompt for guild and player name
 - Selection list, use background color and/or flicker to highlight selection? 
 - Recruitment screen  
@@ -17,11 +40,22 @@
 - Find a channel for idea validation
 
 ### Design
+- Relationships UI
+- Performance meter
+  - at end of encounter
+  - at end of dungeon
+- Morale, tension decay
+- Knowledge system
+- Persona triggers
+  - party
+  - individual
+- How do you calculate cohesion?
+- How do you calculate performance?
 - World Map
   - Set of dungeons 
+- keep track of performance and performance shifts
 - News Screen (updates)
 - Creating and refreshing the recruitment pool
-- Relationships + UI for them
 - Persona Synergy and combat estimates in the assembly screen 
 - Generalize the footer action sets
 - Combat Win/Lose Screen
@@ -36,3 +70,7 @@
 
 ## References
 https://www.w3schools.com/charsets/ref_utf_tiles.asp
+## Additoin Research
+Social Influence across Conversational Contexts 
+
+
