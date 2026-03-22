@@ -4,7 +4,6 @@ import type { Interaction, InteractionDelta, Persona, Relation } from "../types/
 import { INTERACTION_TRIGGER } from "../types/Persona";
 // import interactions from "../data/interactions";
 
-
 const INTERACTION_TRIGGER_CHANCE = 0.3
 const _interaction_cache: Record<INTERACTION_TRIGGER, Array<Interaction>> = {
   [INTERACTION_TRIGGER.BATTLE_LOSS]: [],
@@ -16,6 +15,8 @@ const _relationshio_graph: Record<string, Relation> = {}
 // refactor out and use global world cache
 let _cache_group: Record<string, Persona> = {}
 
+const _to_id = (...args: Array<string>): string => _.join(args, ',')
+
 const _apply_delta_to_relation = (delta: InteractionDelta, relation_id: string) => {
   const relation = _.get(_relationshio_graph, relation_id);
   // TODO: clamp values
@@ -25,10 +26,10 @@ const _apply_delta_to_relation = (delta: InteractionDelta, relation_id: string) 
 }
 
 const _apply_delta = (delta: InteractionDelta, actor_id: string, target_id: string) => {
-  const atot = [actor_id, target_id].join(',')
-  const ttoa = [target_id, actor_id].join(',')
-  _apply_delta_to_relation(delta, atot)
-  _apply_delta_to_relation(delta, ttoa)
+  const actor = _to_id(actor_id, target_id)
+  const target = _to_id(target_id, actor_id)
+  _apply_delta_to_relation(delta, actor)
+  _apply_delta_to_relation(delta, target)
   // recalculate tension
   _.get(_cache_group, actor_id).memory.push('New Interaction record')
   _.get(_cache_group, target_id).memory.push('New Interaction record')
@@ -48,11 +49,11 @@ export default {
       _.forEach(group, (target: Persona) => {
         if (persona.id == target.id)
           return;
-        const relation = _.get(aggr, [persona.id, target.id].join(','), {
+        const relation = _.get(aggr, _to_id(persona.id, target.id), {
           trust: 0,
           tension: 0,
         })
-        _.set(aggr, [persona.id, target.id].join(','), relation)
+        _.set(aggr, _to_id(persona.id, target.id), relation)
       })
       return aggr
     }, _relationshio_graph)
@@ -72,9 +73,15 @@ export default {
       return;
     }
     const interaction = _(matched).shuffle().first()
-    console.log('Matched Interaction: ', interaction)
     // @ts-ignore
     _apply_delta(interaction.delta, actor.id, target.id)
+  },
+  process_relation_drift: () => {
+    _.forIn(_relationshio_graph, relation => {
+      relation.tension = _.clamp(relation.tension - 0.1, 0, 1)
+      relation.trust = _.clamp(relation.trust - 0.01, 0, 1)
+      return relation
+    })
   },
   // hmm shit
   get_interactions: (): Record<INTERACTION_TRIGGER, Array<Interaction>> => _interaction_cache,

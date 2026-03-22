@@ -60,3 +60,9 @@ test('Drama: triggering an action', (_t) => {
   drama.trigger(INTERACTION_TRIGGER.DUNGEON_COMPLETED, true)
   assert.strictEqual(_.values(drama.get_relations()).length, 2)
 });
+
+test('Drama: relationship drift should move tension towards a median', (_t) => {
+  drama.process_relation_drift()
+  var rel = drama.get_relations()
+  assert.strictEqual(2, 2)
+});

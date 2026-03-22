@@ -1,4 +1,4 @@
-## TODO 
+## TODO
 ### Tech
 - Relationships V1
   - define interactions
@@ -22,6 +22,10 @@
   - variant reactions (just different flavor)
   - variant reactions depending on SYMLOG scale (?)
   - dynamic trigger chance?
+  - median relationship values
+- Relationships V3
+  - dynamically add new events
+
 - Events V1
 - prompt for guild and player name
 - Selection list, use background color and/or flicker to highlight selection? 
@@ -41,14 +45,17 @@
 
 ### Design
 - Relationships UI
+- Make a verb model of the gameplay cycle
+- Morale decay
+- Relationship drift values
 - Performance meter
   - at end of encounter
   - at end of dungeon
-- Morale, tension decay
 - Knowledge system
 - Persona triggers
   - party
   - individual
+- Guild Values and its effects on interactions and interventions (mediation)
 - How do you calculate cohesion?
 - How do you calculate performance?
 - World Map

@@ -15,6 +15,9 @@ export type Persona = {
   // need_immersion: number,
   // need_creation: number,
   // aggragate: Relation,
+  base_dominant: number,
+  base_friendly: number,
+  base_compliant: number,
   dominant: number,
   friendly: number,
   // compliance vs expressiveness
@@ -49,16 +52,11 @@ export type Relation = {
   // friendly: number,
   // compliant: number,
 
-
   // are they friends
   // influence: number,
+  // affluent, respect
   trust: number // -1.0f to +1.0f
   tension: number
-  // submissive_dominance: number,
-  // unfriendly_friendly: number,
-  // reclusivness_expressiveneess: number,
-  // of authority, task orientation?
-  // unacceptance_acceptance: number,
 }
 export enum INTERACTION_TRIGGER {
   BATTLE_WIN,
@@ -89,17 +87,17 @@ export type InteractionDelta = {
   morale?: number,
 }
 
-export type InterventionOption = {
+export type InterventionAction = {
   display_text: string
   delta: InteractionDelta,
 }
 
 export type Intervention = Interaction & {
-  options: Array<InterventionOption>
+  actons: Array<InterventionAction>
 }
 
+// query?
 export type InteractionContext = {
   actor: string // should be persona id
   target: string
-  // relation: Relation
 }
