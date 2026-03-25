@@ -80,7 +80,7 @@ export type InteractionDelta = {
   // SYMLOG
   dominant?: number,
   friendly?: number,
-  compliant?: number,
+  compliant?: number, // TODO: changin naming to comforming 
   // IPA
   trust?: number // -1.0f to +1.0f
   tension?: number

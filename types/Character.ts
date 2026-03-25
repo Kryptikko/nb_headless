@@ -4,13 +4,28 @@ export type CombatEffectHandler = {
   apply: (source: Character, target: Character, context: CombatEffect) => void
   process: (delta: number, source: Character, target: Character, context: CombatEffect) => void
 }
+
 type CharacterModifiableAttribute = "hp_max" | "hp_now" | "att" | "def" | "mgc" | "ini"
 
+type ModifieableAttribute = {
+  base: number,
+  total: number
+}
+
+enum MODIFIER_TYPE {
+  ADDATIVE,
+  MULTIPLICATIVE,
+}
+
 export type CharacterModifier = {
-  id: string,
+  id: string
+  display_name: string
+  source: string,
   attribute: CharacterModifiableAttribute
   type: "ADD" | "MUL"
   value: number
+  duration: number | undefined
+  // tags: any
 }
 
 export type Character = {

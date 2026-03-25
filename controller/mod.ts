@@ -2,19 +2,15 @@ import _ from "lodash"
 import type { Character, CharacterModifier } from "../types/Character"
 import character_status from "../screen/components/character_status"
 
-export const apply_mod = (character: Character, mod: CharacterModifier) => {
+export const apply_modifier = (character: Character, mod: CharacterModifier) => {
   character.aura.push(mod)
-  if (mod.type == "ADD") {
-    character[mod.attribute] += mod.value
-  }
-  if (mod.type == "MUL") {
-    character[mod.attribute] += mod.value
-  }
+  _calculate_modifiers()
 }
 export const remove_mod = (character: Character) => {
 }
 
-const _calculate_mods = (character: Character): Character => {
+// (base + addative) * multiplicative
+const _calculate_modifiers = (character: Character): Character => {
   // reset to base stats
   const multi = 0
   const addative = 0

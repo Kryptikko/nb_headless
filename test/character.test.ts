@@ -3,7 +3,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import type { Character, CharacterModifier } from "../types/Character";
 import { ABILITY } from "../types/Ability";
-import { apply_mod } from "../controller/mod";
+import { apply_modifier } from "../controller/mod";
 const char: Character = {
   id: 'test',
   display_name: "Tester",
@@ -21,10 +21,13 @@ const char: Character = {
 test('CharacterModifier: ADD types increases attrbiute', (_t) => {
   var mod: CharacterModifier = {
     id: 'max_hp_buff',
+    display_name: 'Max Hp Buff',
     attribute: 'hp_max',
     type: "ADD",
-    value: 10
+    value: 10,
+    duration: -1,
+    source: 'equipment'
   }
-  apply_mod(char, mod)
+  apply_modifier(char, mod)
   assert.equal(char.hp_max, 110);
 })
