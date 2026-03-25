@@ -4,9 +4,18 @@ export type CombatEffectHandler = {
   apply: (source: Character, target: Character, context: CombatEffect) => void
   process: (delta: number, source: Character, target: Character, context: CombatEffect) => void
 }
+type CharacterModifiableAttribute = "hp_max" | "hp_now" | "att" | "def" | "mgc" | "ini"
+
+export type CharacterModifier = {
+  id: string,
+  attribute: CharacterModifiableAttribute
+  type: "ADD" | "MUL"
+  value: number
+}
+
 export type Character = {
   id: string
-  display_name: string // max 10
+  display_name: string
   // character
   level: number
   xp: number
@@ -22,5 +31,6 @@ export type Character = {
   ability_primary: ABILITY // move to just an id
   // combat overhead
   // ability_current: CombatEffectContext
-  active_effect: Array<CombatEffectContext>
+  // active_effects: Array<CombatEffectContext>
+  aura: Array<CharacterModifier>
 }

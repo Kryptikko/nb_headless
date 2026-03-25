@@ -10,6 +10,9 @@ const _persona_group: Array<Persona> = [
     tension: 1,
     morale: 1,
     dominant: 0.1,
+    base_compliant: 0,
+    base_dominant: 0,
+    base_friendly: 0,
     friendly: 0.1,
     compliant: 0.1,
     memory: []
@@ -20,6 +23,9 @@ const _persona_group: Array<Persona> = [
     dominant: 0.1,
     friendly: 0.1,
     compliant: 0.1,
+    base_compliant: 0,
+    base_dominant: 0,
+    base_friendly: 0,
     memory: []
   },
 ]

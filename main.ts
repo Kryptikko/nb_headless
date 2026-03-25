@@ -18,6 +18,8 @@ const state: WorldState = {
   input: "",
   encounter: "",
   recruitment_pool: [],
+  persona: {},
+  relation: {},
   roster: {
     'war1': {
       id: 'war1',
@@ -78,7 +80,7 @@ const loop = () => {
   const now = Date.now()
   state.game_now = now - state.game_start;
   state.delta = now - last_frame
-  next_frame = next_frame + 100 // RENDER_RATE
+  next_frame = next_frame + RENDER_RATE
   SCREENS[state.current].process(state)
   render_buffer_flush()
   state.input = ""

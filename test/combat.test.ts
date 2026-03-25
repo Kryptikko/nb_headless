@@ -7,6 +7,7 @@ import assert from 'node:assert/strict'
 const attackers: Array<Character> = [{
   id: 'id_1',
   display_name: "Attacker 1",
+  aura: [],
   hp_max: 20,
   hp_now: 20,
   level: 1,
@@ -19,6 +20,7 @@ const attackers: Array<Character> = [{
 }, {
   id: 'id_2',
   display_name: "Attacker 2",
+  aura: [],
   hp_max: 10,
   hp_now: 10,
   level: 1,
@@ -32,6 +34,7 @@ const attackers: Array<Character> = [{
 const defenders: Array<Character> = [{
   id: 'id_d_1',
   display_name: "Defender 1",
+  aura: [],
   hp_max: 10,
   hp_now: 10,
   level: 1,
@@ -44,6 +47,7 @@ const defenders: Array<Character> = [{
 }, {
   id: 'id_d_2',
   display_name: "Defender 2",
+  aura: [],
   hp_max: 10,
   hp_now: 10,
   level: 1,

@@ -88,7 +88,7 @@ What are and what effects the drift values
 What are the drift events (how often does the drift happen)
 
 ## Escalations
-Once certain tension threshold are met an [Escalation](#Escalation) is triggered.
+Once a  certain tension threshold are met an [Escalation](#Escalation) is triggered.
 Escalations result in permanent consequences like. (Ex. change in the SYMLOG values of involved Persona).
 Escalations might prompt player input allowing for mitigation steps.
 Types of consequences:
@@ -124,3 +124,7 @@ Interactions are Neutral (or task oriented) and Positive or Negative (socio-emot
 
 Neutral interactions are task oriented so they contribute to performance but increase tension.
 Socio-emotional interactions are ways of reducing tension. 
+
+# Intervention
+An Intervention is an Interaction between the player and a Persona.
+Intervention are triggered once a Persona reaches specific conditions. 
