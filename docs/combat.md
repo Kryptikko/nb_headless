@@ -5,6 +5,8 @@ Characters are split in 2 opposing group, 4 characters per group
 Each group has 2 front-line and 2 back-line positions.
 
 Target order is as follows position 1 front-line > 2 front-line > 1 back-line > 2 back-line
+TODO:
+4 or 6 slots per side?
 
 ## Combat Performance
 Performance is a function of the group cohesion (relations.md), member know-how (know-how.md) and character strength (equipment + level).

@@ -15,6 +15,7 @@ Application target
  - enemy (1 to many)
  - front-line (fr and en)
  - back-line (fr and en)
+ - target + adjecent
 
 
 # Effect Auras

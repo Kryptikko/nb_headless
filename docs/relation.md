@@ -125,6 +125,9 @@ Interactions are Neutral (or task oriented) and Positive or Negative (socio-emot
 Neutral interactions are task oriented so they contribute to performance but increase tension.
 Socio-emotional interactions are ways of reducing tension. 
 
+Flavour:
+Interactions can add a series of chat interactions between the members, so that when things escalate we can show the chat log and the player can use the chat logs to monitor the party morale?
+
 # Intervention
 An Intervention is an Interaction between the player and a Persona.
 Intervention are triggered once a Persona reaches specific conditions. 
