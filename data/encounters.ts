@@ -14,7 +14,15 @@ export const dungeon_floor_1: CombatEncounter = {
     display_name: "Wretched Golbin",
     id: 'dung_fl_1_goblin_2'
   }],
-  loot: []
+  reward: [{
+    item_id: 'basic_axe',
+    chance: 0.2,
+    amount: [1, 2]
+  }, {
+    item_id: 'basic_armor',
+    chance: 1.0,
+    amount: [1, 1]
+  }]
 }
 
 export const dungeon_floor_2: CombatEncounter = {
@@ -33,5 +41,5 @@ export const dungeon_floor_2: CombatEncounter = {
     display_name: "Fat Troll",
     id: 'dung_fl_2_troll_1'
   }],
-  loot: []
+  reward: []
 }

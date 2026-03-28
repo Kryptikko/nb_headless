@@ -10,6 +10,7 @@ import { ABILITY, TARGET_TYPE, type CombatAbilityContext, type CombatEffect } fr
 import get_ability from "../data/abilities.ts";
 import ability_handler_repo from "../combat_effect/index.ts";
 import { render, render_debug } from "../lib/render.ts";
+import { bank_add } from "../controller/equipment.ts";
 
 enum COMBAT_RESULT {
   ONGOING,
@@ -109,14 +110,30 @@ const _process_cast = (caster: Character, context: CombatAbilityContext) => {
 
 }
 
+const _get_rewards = (world: WorldState): WorldState => {
+  // TODO: Dynamic enounter from world state, aka Encounter Progression
+  // TODO: Reward screen
+  dungeon_floor_1.reward.forEach(reward => {
+    if (_.random(0, 1, true) < reward.chance) {
+      bank_add(world, reward.item_id, _.random(reward.amount[0], reward.amount[1]))
+    }
+  })
+  return world
+}
+
+const _clear = (world: WorldState) => {
+  return _get_rewards(world)
+}
+
 const _process = (wstate: WorldState, lstate: CombatState) => {
   _.values(_local_state.actors)
     .filter((ch) => ch.hp_now > 0)
     .forEach((member: Character) => {
-      _.forEach(member.active_effect, (effect) => {
-        var handler = ability_handler_repo[effect.handler]
-        handler.process(wstate.delta, _.get(lstate.actors, effect.source), member, effect)
-      });
+      //TODO: rework ability effects
+      // _.forEach(member.active_effect, (effect) => {
+      //   var handler = ability_handler_repo[effect.handler]
+      //   handler.process(wstate.delta, _.get(lstate.actors, effect.source), member, effect)
+      // });
       // start casting if its not
       let current_cast = _.get(_ability_repository, member.id) || _get_ability_context(member, member.ability_primary)
       current_cast.cooldown_now -= wstate.delta
@@ -190,9 +207,10 @@ const CombatScreen = (state: WorldState) => {
   _.takeRight(_local_state.log, 3).map(log => render(log))
   return state
 }
+
 const screen: Screen = {
   init: _init,
   process: CombatScreen,
-  clear: _empty_screen_fn
+  clear: _clear
 }
 export default screen;

@@ -5,12 +5,12 @@ import type { Persona, Relation } from "./Persona";
 export const _empty_screen_fn = (_state: WorldState): void => { }
 export enum SCREEN_IDS {
   home,
+  bank,
   dungeon_combat,
   recruitment,
   interview,
   assembly_area,
   guild_roster,
-  bank,
 }
 
 export type Screen = {

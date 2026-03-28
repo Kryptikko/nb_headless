@@ -1,6 +1,6 @@
 import { ABILITY, type CombatEffect, type CombatEffectContext } from "./Ability"
 import { default_equipment, EQUIPMENT_SLOT, type Equipment } from "./Equipment"
-import { type CharacterModifier } from "./Modifier"
+import type { CharacterModifier } from "./Modifier"
 
 export type CombatEffectHandler = {
   apply: (source: Character, target: Character, context: CombatEffect) => void

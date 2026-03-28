@@ -5,6 +5,7 @@ import { SCREENS } from './screen/';
 import { StringDecoder } from "string_decoder";
 import { ABILITY } from "./types/Ability.ts";
 import { render_buffer_flush } from "./lib/render.ts";
+import { default_character } from "./types/Character.ts";
 
 const _decoder = new StringDecoder('utf8');
 const RENDER_RATE = 1000 / 24 // 24 fps
@@ -32,6 +33,7 @@ const state: WorldState = {
   },
   roster: {
     'war1': {
+      ...default_character,
       id: 'war1',
       display_name: "Warrior",
       level: 1,
@@ -43,9 +45,10 @@ const state: WorldState = {
       mgc: 0,
       ini: 2,
       ability_primary: ABILITY.CLEAVE,
-      active_effect: []
+      // active_effect: []
     },
     'wiz1': {
+      ...default_character,
       id: 'wiz1',
       display_name: "Wizard",
       level: 1,
@@ -57,9 +60,10 @@ const state: WorldState = {
       mgc: 3,
       ini: 1,
       ability_primary: ABILITY.BLIZZARD,
-      active_effect: []
+      // active_effect: []
     },
     'sor1': {
+      ...default_character,
       id: 'sor1',
       display_name: "Sorcerer",
       level: 1,
@@ -71,7 +75,7 @@ const state: WorldState = {
       mgc: 2,
       ini: 1,
       ability_primary: ABILITY.FIREBOLT,
-      active_effect: []
+      // active_effect: []
     }
   }
 }

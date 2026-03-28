@@ -1,7 +1,7 @@
 import _, { sum } from "lodash"
-import type { Character, CharacterAura, CharacterModifier } from "../types/Character"
-import { default_modifier, MODIFIER_TYPE } from "../types/Character"
+import { default_character, type Character, type CharacterAura } from "../types/Character"
 import character_status from "../screen/components/character_status"
+import { MODIFIER_TYPE, type CharacterModifier } from "../types/Modifier"
 
 export const apply_modifier = (character: Character, aura: CharacterAura): Character => {
   character.aura.push(aura)
@@ -17,7 +17,7 @@ const ATTRIBUTES = ['hp_max', 'att', 'def', 'mgc', 'ini'];
 // (base + addative) * multiplicative
 export const calculate_modifiers = (character: Character): Character => {
   // reset to base stats
-  const sum_mod = { ...default_modifier }
+  const sum_mod = { ...default_character }
   const mult_mod = {
     hp_max: 1,
     att: 1,

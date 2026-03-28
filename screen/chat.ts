@@ -15,7 +15,7 @@ type LocalState = {
   character_name: string
 }
 const _local_state: LocalState = {
-  chat_log: ['[Clippy]: Hello World', '[You]: Looking to rcruit', '[Clippy]: Yolo skibbidy'],
+  chat_log: ['[Clippy]: Hello World', '[You]: Looking to recruit', '[Clippy]: Yolo skibbidy'],
   options: [],
   cursor_delta: 0,
   cursor_state: false,

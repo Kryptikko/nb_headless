@@ -5,14 +5,11 @@ export type CombatEncounter = {
   display_name: string,
   // copy loot distribution from the GD project
   enemies: Array<Character>,
-  loot: Array<LootDrop>,
+  reward: Array<EncounterReward>,
 }
-enum ITEM {
-  CLUB,
-  BONE,
-}
-type LootDrop = {
+
+type EncounterReward = {
+  item_id: string,
   chance: number,
-  amount: number,
-  item: ITEM
+  amount: [number, number]
 }
