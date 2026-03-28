@@ -5,10 +5,12 @@ import combat_screen from './combat'
 import assembly_area from "./assembly_area.ts";
 import roster from "./roster.ts";
 import recruitment from "./recruitment.ts";
+import bank from "./bank.ts";
 import chat from "./chat.ts";
 
 export const SCREENS: Record<SCREEN_IDS, Screen> = {
   [SCREEN_IDS.home]: home_screen,
+  [SCREEN_IDS.bank]: bank,
   [SCREEN_IDS.dungeon_combat]: combat_screen,
   [SCREEN_IDS.recruitment]: recruitment,
   [SCREEN_IDS.interview]: chat,

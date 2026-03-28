@@ -1,4 +1,5 @@
 import type { Character } from "./Character";
+import type { BankItem } from "./Equipment";
 import type { Persona, Relation } from "./Persona";
 
 export const _empty_screen_fn = (_state: WorldState): void => { }
@@ -8,7 +9,8 @@ export enum SCREEN_IDS {
   recruitment,
   interview,
   assembly_area,
-  guild_roster
+  guild_roster,
+  bank,
 }
 
 export type Screen = {
@@ -33,4 +35,5 @@ export type WorldState = {
   relation: Record<string, Relation>
   persona: Record<string, Persona>
   recruitment_pool: Array<Character>
+  bank: Record<string, BankItem>
 }

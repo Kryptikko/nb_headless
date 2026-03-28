@@ -1,44 +1,18 @@
 import { ABILITY, type CombatEffect, type CombatEffectContext } from "./Ability"
+import { default_equipment, EQUIPMENT_SLOT, type Equipment } from "./Equipment"
+import { type CharacterModifier } from "./Modifier"
 
 export type CombatEffectHandler = {
   apply: (source: Character, target: Character, context: CombatEffect) => void
   process: (delta: number, source: Character, target: Character, context: CombatEffect) => void
 }
 
-export enum MODIFIER_TYPE {
-  ADDATIVE,
-  MULTIPLICATIVE,
-  // expand with multiplicate before stat application and adter
-}
-
-export type CharacterModifier = {
-  type: MODIFIER_TYPE
-  hp_max: number
-  att: number
-  def: number
-  mgc: number
-  ini: number
-}
 
 export type CharacterAura = {
   id: string
   display_name: string
   duration: number
   // source
-  modifiers: CharacterModifier
-}
-
-export enum EQUIPMENT_SLOT {
-  ARMOR,
-  WEAPON,
-  ACCESSORY
-}
-
-// TODO have Equipment template for the base definitoin and then differnt strucutre for an instance
-export type Equipment = {
-  id: string
-  display_name: string
-  slot: EQUIPMENT_SLOT
   modifiers: CharacterModifier
 }
 
@@ -69,22 +43,6 @@ export type Character = {
   equipment_armor: Equipment
   equipment_weapon: Equipment
   equipment_accessory: Equipment
-}
-
-export const default_modifier: CharacterModifier = {
-  type: MODIFIER_TYPE.ADDATIVE,
-  hp_max: 0,
-  att: 0,
-  def: 0,
-  mgc: 0,
-  ini: 0,
-}
-
-export const default_equipment: Equipment = {
-  id: "default_equipment",
-  display_name: "Default Equipment",
-  slot: EQUIPMENT_SLOT.ARMOR,
-  modifiers: default_modifier
 }
 
 export const default_character: Character = {

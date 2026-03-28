@@ -7,6 +7,9 @@
   "peerDependencies": {
     "typescript": "^5"
   },
+  "scripts": {
+    "start": "bun main.ts"
+  },
   "dependencies": {
     "@types/json-logic-js": "^2.0.8",
     "@types/lodash": "^4.17.24",

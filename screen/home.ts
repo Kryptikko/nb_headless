@@ -9,6 +9,7 @@ ${styleText('gray', '[Home State]')}
 [${styleText('underline', 'S')}tart Dungeon Group]
 [R${styleText('underline', 'e')}cruit]
 [${styleText('underline', 'A')}ssembly Area]
+[${styleText('underline', 'B')}ank]
 [${styleText('underline', 'R')}oster] 
 `
   render(template);
@@ -25,7 +26,11 @@ ${styleText('gray', '[Home State]')}
     case "r":
       open_screen(state, SCREEN_IDS.guild_roster)
       break;
+    case "b":
+      open_screen(state, SCREEN_IDS.bank)
+      break;
     default:
+      // error message ?
       break;
   }
   state.input = ""

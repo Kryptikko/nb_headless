@@ -20,6 +20,16 @@ const state: WorldState = {
   recruitment_pool: [],
   persona: {},
   relation: {},
+  bank: {
+    'basic_axe': {
+      item_template_id: 'basic_axe',
+      quantity: 1
+    },
+    'basic_armor': {
+      item_template_id: 'basic_armor',
+      quantity: 2
+    }
+  },
   roster: {
     'war1': {
       id: 'war1',

@@ -58,6 +58,11 @@ TODO:
 - relevant for character specialization 
 
 # Rewards
+Rewards are configured as a array of 
+  - % chance to drop 
+  - range of amount values
+  - item template
+
 - equipment
 - resources
   - crafting materials

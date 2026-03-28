@@ -27,7 +27,7 @@ test('CharacterModifier: REMOVING ADD modifiers remove attrbiute', (_t) => {
   assert.equal(char.hp_max, 100);
 })
 
-test('CharacterModifier: Equiping an Item should apply its stats to the Character', (_t) => {
+test('Equipment: Equiping an Item should apply its stats to the Character', (_t) => {
   var equipment: Equipment = {
     id: 'max_hp_buff',
     slot: EQUIPMENT_SLOT.ARMOR,
