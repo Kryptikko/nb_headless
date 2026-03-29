@@ -62,22 +62,30 @@ const _item_details = (item: BankItem): string => {
 
 const process = (state: WorldState) => {
   const header = [
-    _.repeat('=', 60),
+    "============================================================",
     _.pad('🏦  GUILD BANK  🏦', 60),
-    _.repeat('=', 60)
+    "============================================================",
+    "",
   ].join('\n')
 
-  const footer = `
-press 'j' and 'k' to navigate ↑ and ↓
-press 'h' to go back to home
-`
+  const footer = [
+    "",
+    "============================================================",
+    "press 'j' and 'k' to navigate ↑ and ↓",
+    "press 'h' to go back to home",
+  ].join('\n')
   _handle_input(state);
   const bank_items = _.values(state.bank)
-  let body = `Item                                                     Qty\n`
-  body += _.repeat('_', 60) + '\n\n'
-  body += bank_items.map(_table_row).join('\n');
-  body += '\n' + _.repeat('_', 60) + '\n'
-  body += _item_details(_.get(bank_items, _state.focus))
+  let body = [
+    `Item                                                     Qty`,
+    '------------------------------------------------------------',
+    '',
+    bank_items.map(_table_row).join('\n'),
+    '',
+    '------------------------------------------------------------',
+    _item_details(_.get(bank_items, _state.focus)),
+  ].join('\n')
+
   render(header);
   render(body);
   render(footer);

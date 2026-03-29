@@ -44,6 +44,9 @@
 - Find a channel for idea validation
 
 ### Design
+- Level progression
+- Professions
+  - stats progression 
 - Relationships UI
 - Make a verb model of the gameplay cycle
 - Morale decay

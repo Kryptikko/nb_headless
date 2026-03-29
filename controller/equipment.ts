@@ -2,7 +2,7 @@ import _ from "lodash"
 import type { Character } from "../types/Character"
 import type { WorldState } from "../types/WorldState"
 import { calculate_modifiers } from "./mod"
-import { EQUIPMENT_SLOT, type Equipment } from "../types/Equipment"
+import { EQUIPMENT_SLOT, type BankItem, type Equipment } from "../types/Equipment"
 
 export const equip = (character: Character, equipment: Equipment): Character => {
   // check if the equipment exists, if yes remove it from the bank
@@ -18,6 +18,16 @@ export const equip = (character: Character, equipment: Equipment): Character => 
   return calculate_modifiers(character)
 }
 
+export const bank_add_item = (world: WorldState, { item_template_id, quantity }: BankItem) => {
+  const item = _.get(world.bank, item_template_id, {
+    item_template_id: item_template_id,
+    quantity: 0
+  })
+  item.quantity += quantity;
+  _.set(world.bank, item_template_id, item);
+  return world
+
+}
 export const bank_add = (world: WorldState, equipment_id: string, quantity: number = 1) => {
   const item = _.get(world.bank, equipment_id, {
     item_template_id: equipment_id,

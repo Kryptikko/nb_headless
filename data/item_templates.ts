@@ -7,7 +7,7 @@ const basic_armor: Equipment = {
   slot: EQUIPMENT_SLOT.ARMOR,
   id: "basic_armor",
   display_name: "Basic Armor",
-  display_description: "",
+  display_description: "Based Armor",
   modifiers: {
     type: MODIFIER_TYPE.ADDATIVE,
     hp_max: 10,

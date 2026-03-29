@@ -1,7 +1,7 @@
 import _ from "lodash"
 import { styleText } from "node:util";
 import type { Character } from "../types/Character"
-import { _empty_screen_fn, type Screen, type WorldState } from "../types/WorldState"
+import { _empty_screen_fn, SCREEN_IDS, type Screen, type WorldState } from "../types/WorldState"
 import character_status from "./components/character_status.ts";
 import { dungeon_floor_1 } from "../data/encounters.ts";
 import { ability_cast_bar } from "./components/cast_bar.ts";
@@ -11,6 +11,7 @@ import get_ability from "../data/abilities.ts";
 import ability_handler_repo from "../combat_effect/index.ts";
 import { render, render_debug } from "../lib/render.ts";
 import { bank_add } from "../controller/equipment.ts";
+import { open_screen } from "../controller/screen.ts";
 
 enum COMBAT_RESULT {
   ONGOING,
@@ -28,6 +29,7 @@ type CombatState = {
   defender: Array<string>
   winner: COMBAT_RESULT
 }
+
 let _local_state: CombatState = {
   last_turn_at: 1000,
   turn: 0,
@@ -110,19 +112,18 @@ const _process_cast = (caster: Character, context: CombatAbilityContext) => {
 
 }
 
-const _get_rewards = (world: WorldState): WorldState => {
-  // TODO: Dynamic enounter from world state, aka Encounter Progression
-  // TODO: Reward screen
-  dungeon_floor_1.reward.forEach(reward => {
-    if (_.random(0, 1, true) < reward.chance) {
-      bank_add(world, reward.item_id, _.random(reward.amount[0], reward.amount[1]))
-    }
-  })
-  return world
-}
-
 const _clear = (world: WorldState) => {
-  return _get_rewards(world)
+  //TODO: set winner or loser
+  _local_state = {
+    last_turn_at: 1000,
+    turn: 0,
+    log: [],
+    stats: [],
+    actors: {},
+    attacker: [],
+    defender: [],
+    winner: COMBAT_RESULT.ONGOING
+  }
 }
 
 const _process = (wstate: WorldState, lstate: CombatState) => {
@@ -156,8 +157,9 @@ const CombatScreen = (state: WorldState) => {
   // render
 
   if (_local_state.winner != COMBAT_RESULT.ONGOING) {
-    render('COMBAT OVER WINNER IS')
     _local_state.winner == COMBAT_RESULT.ATTACKER_WIN ? render('PARTY') : render('ENEMIES')
+    // render('COMBAT OVER WINNER IS')
+    open_screen(state, SCREEN_IDS.combat_reward)
   }
   if (_local_state.winner == COMBAT_RESULT.ONGOING)
     _process(state, _local_state)
