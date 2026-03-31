@@ -6,9 +6,10 @@ import { render, render_debug } from "../lib/render";
 import type { BankItem } from "../types/Equipment";
 import { dungeon_floor_1 } from "../data/encounters";
 import type { Character } from "../types/Character";
-import { WatchDirectoryFlags } from "typescript";
 import { bank_add_item } from "../controller/equipment";
-import get_equipment from "../data/item_templates";
+import get_equipment from "../data/items";
+import drama from "../controller/drama";
+import { INTERACTION_TRIGGER } from "../types/Persona";
 
 
 const _handle_input = (state: WorldState) => {
@@ -65,6 +66,7 @@ const _init = (world: WorldState) => {
     party_member.xp += _state.reward_xp
     // TODO: character levelups
   })
+  drama.trigger(INTERACTION_TRIGGER.DUNGEON_COMPLETED)
 }
 
 const _clear = (world: WorldState) => {
@@ -83,35 +85,26 @@ const _item_row = () => {
 }
 
 const process = (state: WorldState) => {
-  const header = [
+  _handle_input(state);
+  let body = [
     "============================================================",
     _.pad('🏆  VICTORY  🏆', 60),
     "============================================================",
     "Location: " + dungeon_floor_1.display_name,
-    ""
-  ].join('\n')
-
-  const footer = [
     "",
-    "============================================================",
-    "press 'h' to go back to home",
-    "press 'r' to go retry",
-  ].join('\n')
-  _handle_input(state);
-  let body = [
     `Item                                                     Qty`,
     '------------------------------------------------------------',
     '',
     _item_row(),
     '',
     '------------------------------------------------------------',
+    "",
+    "============================================================",
+    "press 'h' to go back to home",
+    "press 'r' to go retry",
   ].join('\n')
 
-  render(header);
   render(body);
-  render(footer);
-
-  state.input = ""
 }
 
 const screen: Screen = {

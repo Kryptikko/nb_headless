@@ -5,9 +5,17 @@ The player can assign a guild member to an activity by using a resource (?).
 Activities happen in certain areas of the Over-World.
 The same activity might provide different outcomes depending on the area where its assigned.
 Example: 
-- Questing 
-- Grinding? 
+- Leveling Questing 
+- Crafting - delegating a player to handle it
 - Farming resources (mining, gathering herbs, fishing!, skinning?)
+- Dungeon
+- Raids
+- Dailies?
+
+Social Activities
+- Socializing
+- Idle
+- Larping
 
 !TBD:
 Members enjoy certain activities based on their needs.

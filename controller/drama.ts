@@ -18,6 +18,7 @@ let _cache_group: Record<string, Persona> = {}
 const _to_id = (...args: Array<string>): string => _.join(args, ',')
 
 const _apply_delta_to_relation = (delta: InteractionDelta, relation_id: string) => {
+  // init a default value if missing
   const relation = _.get(_relationshio_graph, relation_id);
   // TODO: clamp values
   relation.tension += _.clamp(delta.tension || 0, 0, 1)
@@ -62,7 +63,7 @@ export default {
   // To mood, dominance/friendliness/expressiveness axes
   // To relation strength/trust/respect (bidirectional or asymmetric)
   trigger: (trig: INTERACTION_TRIGGER, force_trigger: boolean = false) => {
-    if (_.random(0, 1) < INTERACTION_TRIGGER_CHANCE && force_trigger == false)
+    if (_.random(0, 1, true) < INTERACTION_TRIGGER_CHANCE && force_trigger == false)
       return;
     var [actor, target] = _(_cache_group).values().shuffle().take(2).value()
     const populate_context = { actor, target };
@@ -75,6 +76,7 @@ export default {
     const interaction = _(matched).shuffle().first()
     // @ts-ignore
     _apply_delta(interaction.delta, actor.id, target.id)
+
   },
   process_relation_drift: () => {
     _.forIn(_relationshio_graph, relation => {

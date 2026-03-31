@@ -1,4 +1,4 @@
-# Game Theory Strategies - Focus on the 3rd expansion
+# Game Theory Strategies
 
 Cooperation vs Cheating 
 Receprical behaviour

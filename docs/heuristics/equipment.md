@@ -1,0 +1,5 @@
+# Equipment
+
+# Consumables
+
+# Crafting
