@@ -6,6 +6,7 @@ import { render } from "../lib/render";
 const process = (state: WorldState) => {
   const template = `
 ${styleText('gray', '[Home State]')}
+[${styleText('underline', 'O')}verworld]
 [${styleText('underline', 'S')}tart Dungeon Group]
 [R${styleText('underline', 'e')}cruit]
 [${styleText('underline', 'A')}ssembly Area]
@@ -28,6 +29,9 @@ ${styleText('gray', '[Home State]')}
       break;
     case "b":
       open_screen(state, SCREEN_IDS.bank)
+      break;
+    case "o":
+      open_screen(state, SCREEN_IDS.overworld)
       break;
     default:
       // error message ?

@@ -6,6 +6,7 @@ export const _empty_screen_fn = (_state: WorldState): void => { }
 export enum SCREEN_IDS {
   home,
   bank,
+  overworld,
   combat_reward,
   dungeon_combat,
   recruitment,

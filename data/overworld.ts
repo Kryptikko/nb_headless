@@ -29,7 +29,7 @@ const repo: Record<string, Zone> = {
   "Mountains": {
     display_name: "Mountains",
     description: "Rugged mountains with dwarven ruins.",
-    visual: "⛰️",
+    visual: "⛰️ ",
     activities: [
       { name: "Mine for Ore", action: "mine" },
       { name: "Climb to the Summit", action: "climb" },
@@ -41,7 +41,7 @@ const repo: Record<string, Zone> = {
   "Town Hub": {
     display_name: 'Town Hub',
     description: "Bustling riverside town with market and tavern.",
-    visual: "🏘️",
+    visual: "🏘️ ",
     activities: [
       { name: "Visit Market", action: "shop" },
       { name: "Go to Tavern", action: "tavern" },

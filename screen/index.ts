@@ -8,10 +8,12 @@ import roster from "./roster.ts";
 import recruitment from "./recruitment.ts";
 import bank from "./bank.ts";
 import chat from "./chat.ts";
+import overworld from "./overworld";
 
 export const SCREENS: Record<SCREEN_IDS, Screen> = {
   [SCREEN_IDS.home]: home_screen,
   [SCREEN_IDS.bank]: bank,
+  [SCREEN_IDS.overworld]: overworld,
   [SCREEN_IDS.dungeon_combat]: combat_screen,
   [SCREEN_IDS.combat_reward]: combat_reward,
   [SCREEN_IDS.recruitment]: recruitment,

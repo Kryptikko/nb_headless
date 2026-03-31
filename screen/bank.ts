@@ -3,7 +3,7 @@ import _ from "lodash"
 import { SCREEN_IDS, type WorldState, type Screen, _empty_screen_fn } from '../types/WorldState';
 import { open_screen } from "../controller/screen";
 import { render, render_debug } from "../lib/render";
-import get_equipment from "../data/item_templates";
+import get_equipment from "../data/items";
 import type { BankItem } from "../types/Equipment";
 import container from "./components/container";
 
