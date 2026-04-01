@@ -10,6 +10,7 @@ import { bank_add_item } from "../controller/equipment";
 import get_equipment from "../data/items";
 import drama from "../controller/drama";
 import { INTERACTION_TRIGGER } from "../types/Persona";
+import { enemy_xp_per_group, xp_add } from "../controller/character_level";
 
 
 const _handle_input = (state: WorldState) => {
@@ -57,14 +58,16 @@ const _init = (world: WorldState) => {
       bank_add_item(world, item)
     }
   })
+  const group_levels: Array<number> = world.party.map((id: string) => {
+    const party_member = _.get(world.roster, id)
+    return party_member.level
+  })
   dungeon_floor_1.enemies.forEach((character: Character) => {
-    // TODO: xp is a function of the defeated characters levels
-    _state.reward_xp = character.level * 10
+    _state.reward_xp += enemy_xp_per_group(character.level, group_levels);
   })
   world.party.forEach((id) => {
     const party_member = _.get(world.roster, id)
-    party_member.xp += _state.reward_xp
-    // TODO: character levelups
+    _.set(world.roster, id, xp_add(party_member, _state.reward_xp))
   })
   drama.trigger(INTERACTION_TRIGGER.DUNGEON_COMPLETED)
 }
@@ -91,6 +94,7 @@ const process = (state: WorldState) => {
     _.pad('🏆  VICTORY  🏆', 60),
     "============================================================",
     "Location: " + dungeon_floor_1.display_name,
+    "Experience: " + _state.reward_xp,
     "",
     `Item                                                     Qty`,
     '------------------------------------------------------------',

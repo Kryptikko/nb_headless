@@ -1,4 +1,4 @@
-import { ABILITY, type CombatEffect, type CombatEffectContext } from "./Ability"
+import { ABILITY, type CombatEffect } from "./Ability"
 import { default_equipment, EQUIPMENT_SLOT, type Equipment } from "./Equipment"
 import type { CharacterModifier } from "./Modifier"
 
@@ -7,6 +7,10 @@ export type CombatEffectHandler = {
   process: (delta: number, source: Character, target: Character, context: CombatEffect) => void
 }
 
+export enum PROFESSION {
+  FIGHTER,
+  MYSTIC,
+}
 
 export type CharacterAura = {
   id: string
@@ -16,10 +20,19 @@ export type CharacterAura = {
   modifiers: CharacterModifier
 }
 
+export type ProfessionStatsGrowth = {
+  hp_max: number
+  att: number
+  def: number
+  mgc: number
+  ini: number
+}
+
 export type Character = {
   id: string
   display_name: string
   // character
+  profession: PROFESSION
   level: number
   xp: number
   // combat

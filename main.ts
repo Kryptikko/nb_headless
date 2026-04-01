@@ -5,7 +5,7 @@ import { SCREENS } from './screen/';
 import { StringDecoder } from "string_decoder";
 import { ABILITY } from "./types/Ability.ts";
 import { render_buffer_flush } from "./lib/render.ts";
-import { default_character } from "./types/Character.ts";
+import { default_character, PROFESSION } from "./types/Character.ts";
 
 const _decoder = new StringDecoder('utf8');
 const RENDER_RATE = 1000 / 24 // 24 fps
@@ -36,6 +36,7 @@ const state: WorldState = {
       ...default_character,
       id: 'war1',
       display_name: "Warrior",
+      profession: PROFESSION.FIGHTER,
       level: 1,
       xp: 0,
       hp_max: 120,
@@ -51,6 +52,7 @@ const state: WorldState = {
       ...default_character,
       id: 'wiz1',
       display_name: "Wizard",
+      profession: PROFESSION.MYSTIC,
       level: 1,
       xp: 0,
       hp_max: 60,
@@ -66,6 +68,7 @@ const state: WorldState = {
       ...default_character,
       id: 'sor1',
       display_name: "Sorcerer",
+      profession: PROFESSION.MYSTIC,
       level: 1,
       xp: 0,
       hp_max: 60,
