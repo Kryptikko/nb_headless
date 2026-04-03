@@ -2,13 +2,16 @@ import _ from "lodash"
 
 let buffer: Array<string> = []
 let debug_buffer: Array<any> = []
+
 export const render = (line: string) => {
   buffer.push(line)
 }
+
 export const render_buffer_clear = () => {
   buffer = []
   debug_buffer = []
 }
+
 export const render_debug = (...args: any[]) => {
   debug_buffer = _.concat(debug_buffer, ...args)
 }

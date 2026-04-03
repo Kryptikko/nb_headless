@@ -52,6 +52,8 @@ Paladin:
   - Devotion Aura
   - Something else Aura
 
+Crusader:
+
 Cleric:
   Active
     - Bless - heals for a small amount and gives damage/crit?

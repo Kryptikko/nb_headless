@@ -56,11 +56,13 @@ export type Character = {
   equipment_armor: Equipment
   equipment_weapon: Equipment
   equipment_accessory: Equipment
+  flags: Array<string>
 }
 
 export const default_character: Character = {
   id: '_default',
   display_name: "Default",
+  profession: PROFESSION.FIGHTER,
   level: 1,
   xp: 100,
   hp_now: 100,
@@ -78,5 +80,6 @@ export const default_character: Character = {
   aura: [],
   equipment_accessory: { ...default_equipment, slot: EQUIPMENT_SLOT.ACCESSORY },
   equipment_armor: { ...default_equipment, slot: EQUIPMENT_SLOT.ARMOR },
-  equipment_weapon: { ...default_equipment, slot: EQUIPMENT_SLOT.WEAPON }
+  equipment_weapon: { ...default_equipment, slot: EQUIPMENT_SLOT.WEAPON },
+  flags: []
 }

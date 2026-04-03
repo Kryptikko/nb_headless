@@ -8,15 +8,56 @@ import container from "./components/container";
 
 type LocalState = {
   chat_log: Array<string>
-  options: Array<string>
+  dialogue: Record<string, ChatNode>
   character?: Character
   cursor_delta: number,
   cursor_state: boolean,
   character_name: string
 }
+
+type ChatOption = {
+  id: string
+  lines: Array<string>
+  isEnd: boolean
+  enabled: string
+  action: string
+}
+type ChatNode = {
+  id: string
+  lines: Array<string>
+  options: Record<string, ChatOption>
+}
+
 const _local_state: LocalState = {
   chat_log: ['[Clippy]: Hello World', '[You]: Looking to recruit', '[Clippy]: Yolo skibbidy'],
-  options: [],
+  dialogue: {
+    "_start": {
+      id: "_start",
+      lines: ["[You]: Hey there!", "[You]: Wanna build a snowman?", "[Him]: Dafuq are you talking bout?"],
+      options: {
+        "gear": {
+          id: "gear",
+          lines: [
+            "[You]: Whats your gear like?",
+            "[Him]: I has all the gearz",
+          ],
+          isEnd: false,
+          enabled: 'shown_gear',
+          action: 'show_gear'
+        },
+        "profession": {
+          id: "profession",
+          lines: [
+            "[You]: What are your professions?",
+            "[Him]: You can profession these nuts.",
+          ],
+          isEnd: false,
+          enabled: 'shown_profession',
+          action: 'show_profession'
+        }
+      }
+    }
+  },
   cursor_delta: 0,
   cursor_state: false,
   character_name: "Clippy"
@@ -48,6 +89,11 @@ const process = (state: WorldState) => {
     case "b":
       open_screen(state, SCREEN_IDS.home)
       break;
+    case "r":
+      // add to roster
+      open_screen(state, SCREEN_IDS.home)
+      break;
+
     default:
       break;
   }

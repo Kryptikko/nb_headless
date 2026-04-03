@@ -1,5 +1,4 @@
 import _, { over } from "lodash"
-// import { styleText } from "node:util";
 import { SCREEN_IDS, type WorldState, type Screen, _empty_screen_fn } from '../types/WorldState';
 import { open_screen } from "../controller/screen";
 import { render, render_debug } from "../lib/render";

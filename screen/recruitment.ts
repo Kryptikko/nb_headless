@@ -2,8 +2,8 @@ import _ from "lodash";
 import { styleText } from "node:util";
 import { SCREEN_IDS, type WorldState, type Screen, _empty_screen_fn } from '../types/WorldState';
 import { open_screen } from "../controller/screen";
-import { render } from "../lib/render";
-import type { Character } from "../types/Character";
+import { render, render_debug } from "../lib/render";
+import { default_character, type Character } from "../types/Character";
 import { ABILITY } from "../types/Ability";
 
 const _names: Array<string> = [
@@ -17,9 +17,11 @@ const _names: Array<string> = [
   'Oratune',
   'Aenne',
   'Callava']
+
 const _generate_member = (_state: WorldState): Character => {
   // we need the turn from the world state and the current recruitment pool
   return {
+    ...default_character,
     id: "",
     display_name: _.get(_names, Math.floor(Math.random() * _names.length)),
     // characte
@@ -32,21 +34,24 @@ const _generate_member = (_state: WorldState): Character => {
     mgc: 1,
     ini: 1,
     ability_primary: ABILITY.MELEE,
-    active_effect: []
   }
 }
+
 type LocalState = {
   selection: number
   pool: Array<Character>
 
 }
+
 const _local_state: LocalState = {
   selection: -1,
   pool: []
 }
+
 const init = (state: WorldState) => {
   _local_state.pool = _.map(Array(5) as Array<Character>, () => _generate_member(state))
 }
+
 const _recruit_row = (ch: Character, is_selected: boolean = false): string => {
   return [
     is_selected ? "->" : "  ",
@@ -54,6 +59,7 @@ const _recruit_row = (ch: Character, is_selected: boolean = false): string => {
     _.padEnd(ch.display_name, 20)
   ].join(' ')
 }
+
 const _selection_details = (ch: Character): string => {
   if (!ch) return `Currently selected:
     None
@@ -63,6 +69,7 @@ const _selection_details = (ch: Character): string => {
    "I've got quick fingers and quicker feet. What’s the job?"
   `
 }
+
 const process = (state: WorldState) => {
   const header = styleText('gray', '[Recruitment]')
   const footer = '[j, k] Select  [Enter] Recruit  [I] Interview  [B] Back to Home '
@@ -84,16 +91,14 @@ const process = (state: WorldState) => {
       break;
     case "j":
       _local_state.selection = (_local_state.selection + 1) % _local_state.pool.length
-      state.input = ""
       break;
     case "k":
       _local_state.selection = _local_state.selection == 0 ? _local_state.pool.length - 1 : (_local_state.selection - 1) % _local_state.pool.length
-      state.input = ""
       break;
-    case " ":
-      const focused_character = _local_state.pool[_local_state.selection]
-      if (!focused_character) break;
-      break;
+    // case " ":
+    //   const focused_character = _local_state.pool[_local_state.selection]
+    //   if (!focused_character) break;
+    //   break;
     default:
       break;
   }

@@ -77,7 +77,6 @@ const roster = (state: WorldState) => {
   const focused_character_id = Object.values(state.roster)[_state.focus];
   const footer = MemberPreview(focused_character_id);
   // render
-  console.log('DEBUG LINE - ', _state.focus, state.party);
 
   render(header);
   render(container(body));
