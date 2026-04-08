@@ -1,4 +1,5 @@
 import { render, render_buffer_flush, render_debug } from "./render";
+import assert from "node:assert";
 
 export type Entity = number;
 
@@ -29,6 +30,7 @@ export const create_entity = (world: World): [World, Entity] => {
   return [new_world, entity]
 }
 
+//TODO: maps might not be ideal do a deep dive
 export const destroy_entity = (world: World, entity: Entity): World => {
   // eew
   const new_entities = new Set(world.entities);
@@ -85,7 +87,13 @@ export const remove_component = <T extends Component>(world: World, entity: Enti
 }
 
 
-export const get_component = <T extends Component>(world: World, entity: Entity, type: string): T | undefined => {
+export const get_component = <T extends Component>(world: World, entity: Entity, type: string): T => {
+  const component = world.components.get(type)?.get(entity) as T
+  assert(component, `Entity ${entity} does not have component of type ${type}.`)
+  return component
+}
+
+export const try_get_component = <T extends Component>(world: World, entity: Entity, type: string): T | undefined => {
   return world.components.get(type)?.get(entity) as T | undefined
 }
 
@@ -106,9 +114,7 @@ export const query = (world: World, component_types: string[]): Entity[] => {
   return candidates
 }
 
-// interface TagDirtyAttributes extends Component {
-//   type: "TagDirtyAttributes"
-// }
+// split between attributes, stats and identity?
 export interface Attributes extends Component {
   type: "Attributes";
   health_now: number;
@@ -116,49 +122,70 @@ export interface Attributes extends Component {
   str: number;
   int: number;
   dex: number;
+  crit_chance: number;
 }
 
 export interface Abilities extends Component {
   type: "Abilities"
-  abilities: Entity[]
+  abilities: string[]
 }
 
-export interface Ability extends Component {
-  type: "Ability"
-  display_name: string
-  on_cast_effects: Entity[]
-  on_land_effects: Entity[]
+// export interface Auras extends Component {
+//   type: "Auras"
+//   auras: Entity[]
+// }
+
+export interface NotCasting extends Component {
+  type: "NotCasting";
 }
 
-export interface CastTime extends Component {
-  type: "Casttime";
-  cooldown: number;
-  last_used: number;
+export interface TagInitialize extends Component {
+  type: "TagInitialize";
 }
 
-export interface Source extends Component {
-  type: "Source"
-  entity_id: Entity
+export interface Aura_PeriodicDamage extends Component {
+  type: "Aura_PeriodicDamage";
 }
 
-export interface TagEnemy extends Component {
-  type: "TagEnemy"
+export interface Casting extends Component {
+  type: "Casting";
+  spell_id: string; // spell id
+  target: Entity;
+  source: Entity;
+  cast_max: number;
+  cast_now: number;
 }
 
-export interface TagPlayer extends Component {
-  type: "TagPlayer"
+export interface Cooldown extends Component {
+  type: "Cooldown";
+  cooldown_max: number;
+  cooldown_now: number;
+  ability: string;
 }
 
-export interface TriggerStrategy extends Component {
-  type: "TriggerStrategy";
-  behaviour: "ALL" | "SINGLE" | "FRONT" | "BACK";
-  number: number;
+// export interface Source extends Component {
+//   type: "Source"
+//   entity_id: Entity
+// }
+
+export interface TagTargetable extends Component {
+  type: "TagTargetable"
+  team: "player" | "enemy"
+}
+
+export interface TagAlive extends Component {
+  type: "TagAlive"
+}
+
+export interface TagDead extends Component {
+  type: "TagDead"
 }
 
 export interface TargetStrategy extends Component {
-  type: "TargetStrategy";
-  behaviour: "ALL" | "SINGLE" | "FRONT" | "BACK";
-  number: number;
+  type: "TargetStrategy"
+  behaviour: "ALL" | "SINGLE" | "FRONT" | "BACK"
+  team: "player" | "enemy"
+  number: number
 }
 
 export interface Target extends Component {
@@ -166,90 +193,37 @@ export interface Target extends Component {
   entities: Entity[]
 }
 
-export interface Duration extends Component {
-  type: "Duration"
-  duration: number,
-  duration_now: number,
+export interface PendingDamage extends Component {
+  type: "PendingDamage"
+  damage: number
+  is_crit: boolean
+  target: Entity
+  source: Entity
 }
-
-export interface DamageEffect extends Component {
-  type: "DamageEffect"
-  min: number
-  max: number
-}
-
-export interface Critical extends Component {
-  type: "Critical"
-  chance: number
-  power: number
-}
-
-export interface Attributes extends Component {
-  type: "Attributes";
-  health_now: number;
-  health_max: number;
-  str: number;
-  int: number;
-  dex: number;
-}
-
-export interface Equipment extends Component {
-  type: "Equipment";
-  display_name: string;
-  display_description: string;
-  modifier: Entity
-  // slot: 
-}
-
-export interface Modifier extends Component {
-  type: "Modifier";
-  modifier_type: "ADDATIVE" | "MULTIPLICATIVE"
-  attribute: string;
-  value: number;
-}
-
-// export interface Stats extends Component {
-//   type: "Stats";
-//   health_now: number;
-//   health_max: number;
+// export interface PendingSlowEffect extends Component {
+//   type: "PendingSlowEffect"
+//   target: Entity
+//   source: Entity
+//   value: number
+// }
+// export interface PendingDamageEffect extends Component {
+//   type: "PendingDamageEffect"
+//   damage: [number, number]
+//   mod: number // how much does it benefit from the school
+//   target: Entity
+//   source: Entity
+//   school: "Frost" | "Fire" | "Physical"
+// }
+// interface DamageOverTime extends Component {
+//   type: "DamageOverTime"
+//   damage_per_tick: number
+//   tick_rate: number
+//   remaining_duration: number
+//   last_tick_time: number
 // }
 
-interface Position extends Component {
-  type: "Position";
-  x: number;
-  y: number;
-}
 
-interface Velocity extends Component {
-  type: "Velocity"
-  vx: number;
-  vy: number;
-}
-
-interface Renderable extends Component {
-  type: "Renderable"
-  color: string
-  size: number
-}
-
-
-// interface DamageEffect extends Component {
-//   type: "DamageEffect"
-//   min: number
-//   max: number
-//   critical_chance: number
-// }
-
-interface DamageOverTime extends Component {
-  type: "DamageOverTime"
-  damage_per_tick: number
-  tick_rate: number
-  remaining_duration: number
-  last_tick_time: number
-}
-
-
-const roll_critical = (chance: number): boolean => {
+export const roll_critical = (chance: number): boolean => {
   return Math.random() < chance;
 }
 const roll_damage = (min: number, max: number): number => {
@@ -257,48 +231,26 @@ const roll_damage = (min: number, max: number): number => {
   return Math.floor(Math.random() * (min - max + 1)) + min;
 }
 
-export const cast_ability_system = (
-  world: World,
-  caster: Entity,
-  target: Entity,
-  ability_name: string,
-  current_time: number
-): World => {
-  const abilities = query(world, ["Ability"]);
-  let ability_entity: Entity | null = null
-  for (const e in abilities) {
-    const element = get_component<Ability>(world, e, "Ability")!;
-  }
-  return world
-}
-
-export const movement_system = (world: World, delta: number): World => {
-  const entities = query(world, ["Position", "Velocity"]);
-  let new_world = { ...world }
-  for (const entity of entities) {
-    // wtf is this ! syntax?
-    const pos = get_component<Position>(world, entity, "Position")!;
-    const vel = get_component<Velocity>(world, entity, "Velocity")!;
-    const new_position: Position = {
-      type: "Position",
-      x: pos.x + vel.vx * delta,
-      y: pos.y + vel.vy * delta
-    }
-    new_world = add_component(new_world, entity, new_position)
-  }
-  return new_world;
-}
-
 export const render_system = (world: World): void => {
-  const entities = query(world, ["Position", "Renderable"]);
+  const entities = query(world, ["Attributes"]);
   for (const entity of entities) {
-    const pos = get_component<Position>(world, entity, "Position")!;
-    const renderable = get_component<Renderable>(world, entity, "Renderable")!;
-    render(
-      `Entity ${entity}: pos=(${pos.x.toFixed(1)}, ${pos.y.toFixed(1)}), ` +
-      `color=${renderable.color}, size=${renderable.size}`
-    )
+    const attr = get_component<Attributes>(world, entity, "Attributes");
+
+    const health_pct = attr.health_now / attr.health_max;
+    const health_bar = "█".repeat(Math.floor(health_pct * 10)) + "░".repeat(10 - Math.floor(health_pct * 10));
+    let row = `${entity}: [${health_bar}] ${attr.health_now}/${attr.health_max} HP `
+
+    const cast = try_get_component<Casting>(world, entity, "Casting");
+    if (cast) {
+      row += `- [${cast.spell_id}] ${cast.cast_now}`
+    }
+    const cooldown = try_get_component<Cooldown>(world, entity, "Cooldown");
+    if (cooldown) {
+      row += ` / ${cooldown.cooldown_now}`
+    }
+
+    render(row)
   }
-  process.stdout.write('\x1b[2J\x1b[H'); // ANSI clear + home
   render_buffer_flush()
+  world.components.forEach(d => console.table(d))
 }
