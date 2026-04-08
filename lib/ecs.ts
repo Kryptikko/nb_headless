@@ -1,6 +1,17 @@
 import { render, render_buffer_flush, render_debug } from "./render";
 import assert from "node:assert";
 
+// TODO: Migrate once setteled on a solid set
+// enum C {
+//   Abilities = "Abilities",
+//   Position = "Position",
+//   Casting = "Casting",
+//   TagAlive = "TagAlive",
+//   TagDead = "TagDead",
+//   TagTargetable = "TagTargetable",
+//   Aura_PeriodicDamage = "Aura_PeriodicDamage"
+// }
+
 export type Entity = number;
 
 export interface Component {
@@ -130,6 +141,12 @@ export interface Abilities extends Component {
   abilities: string[]
 }
 
+export interface Position extends Component {
+  type: "Position"
+  index: number
+  // board side
+  team: "player" | "enemy"
+}
 // export interface Auras extends Component {
 //   type: "Auras"
 //   auras: Entity[]
@@ -143,14 +160,19 @@ export interface TagInitialize extends Component {
   type: "TagInitialize";
 }
 
+
 export interface Aura_PeriodicDamage extends Component {
   type: "Aura_PeriodicDamage";
+  remainig: number;
+  source: Entity;
+  rate: number;
+  value: number;
 }
 
 export interface Casting extends Component {
   type: "Casting";
   spell_id: string; // spell id
-  target: Entity;
+  target: Entity[];
   source: Entity;
   cast_max: number;
   cast_now: number;
@@ -199,7 +221,9 @@ export interface PendingDamage extends Component {
   is_crit: boolean
   target: Entity
   source: Entity
+  // school: "magic" | "physical"
 }
+
 // export interface PendingSlowEffect extends Component {
 //   type: "PendingSlowEffect"
 //   target: Entity
@@ -252,5 +276,5 @@ export const render_system = (world: World): void => {
     render(row)
   }
   render_buffer_flush()
-  world.components.forEach(d => console.table(d))
+  // world.components.forEach(d => console.table(d))
 }

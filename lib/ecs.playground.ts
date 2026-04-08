@@ -12,11 +12,10 @@ import {
 } from "./ecs";
 import type {
   Abilities,
-  Ability,
+  Position,
   Attributes,
   Aura_PeriodicDamage,
   Casting,
-  Component,
   Cooldown,
   PendingDamage,
   TagTargetable,
@@ -93,7 +92,12 @@ type StunEffect = {
   chance: number
 }
 type AbilityEffect = DamageEffect | PeriodicDamageEffect | StunEffect
-
+enum TARGETTING {
+  ENEMY_SINGLE,
+  ENEMY_ALL,
+  FRIEND_SINGLE,
+  FRIEND_ALL,
+}
 type AbilityDefinition = {
   id: string
   display_name: string
@@ -101,7 +105,7 @@ type AbilityDefinition = {
   cooldown: number
   cast_time: number
   vfx: string
-  targetting: string // todo: enum
+  targetting: TARGETTING // todo: enum
   // trigger // on hit, on being hit, Passive, Active
   // flags: string[]
   effect_on_hit: AbilityEffect[]
@@ -119,10 +123,10 @@ const FireballDef: AbilityDefinition = {
   id: "fireball",
   display_name: "Fireball",
   display_description: "Big Balls of Fire",
-  targetting: "Enemy::Single",
+  targetting: TARGETTING.ENEMY_SINGLE,
   // trigger: "Trigger::Cast", // or tag? Trigger:Passive, Trigger:OnAttack
-  cooldown: 6,
-  cast_time: 3,
+  cooldown: 1,
+  cast_time: 1,
   vfx: "🔥",
   // on_cast_effect: [{
   //   type: "ApplyAura::ModifierDamageDone%",
@@ -156,7 +160,7 @@ const get_spell_by_id = (id: string): AbilityDefinition => {
   return FireballDef
 }
 
-export const character_to_entity = (world: World): [World, Entity] => {
+export const character_to_entity = (world: World, team: "player" | "enemy"): [World, Entity] => {
   let entity: Entity;
   [world, entity] = create_entity(world);
   world = add_component(world, entity, {
@@ -174,10 +178,19 @@ export const character_to_entity = (world: World): [World, Entity] => {
   })
   world = add_component(world, entity, {
     type: "TagTargetable",
+    team
   })
-  // state
+  world = add_component(world, entity, {
+    type: "Position",
+    team,
+    index: 0
+  })
+  // state/aka tags
   world = add_component(world, entity, {
     type: "NotCasting",
+  })
+  world = add_component(world, entity, {
+    type: "TagAlive",
   })
 
   return [world, entity]
@@ -193,8 +206,10 @@ export const init_entity = (world: World): [World, Entity] => {
 }
 
 [world, init] = init_entity(world);
-[world, player] = character_to_entity(world);
-[world, enemy] = character_to_entity(world);
+[world, player] = character_to_entity(world, "player");
+[world, player] = character_to_entity(world, "player");
+[world, enemy] = character_to_entity(world, "enemy");
+[world, enemy] = character_to_entity(world, "enemy");
 
 
 const init_system = (world: World, delta: number): World => {
@@ -210,29 +225,6 @@ const init_system = (world: World, delta: number): World => {
 
   return new_world
 }
-
-// impulse components vs command components
-
-// const targeting_system = (world: World, _delta: number): World => {
-//   let new_world = { ...world }
-//   const entities = query(world, ["TargetStrategy"]);
-//   const targets = query(world, ["TagTargetable"]);
-//   for (const entity of entities) {
-//     const strategy = get_component<TargetStrategy>(world, entity, "TargetStrategy")!;
-//     let available_targets = _.filter(targets, (ent: Entity) => {
-//       return get_component<TagTargetable>(world, ent, 'TagTargetable')!.team == strategy.team
-//     })
-//     if (!_.isEmpty(available_targets)) {
-//       // set entities based on strategy
-//       new_world = add_component(new_world, entity, {
-//         type: "Target",
-//         entities: _.take(available_targets, strategy.number)
-//       })
-//     }
-//   }
-//   return new_world
-// }
-
 
 export const cooldown_system = (world: World, delta: number): World => {
   const casters = query(world, ["Cooldown"]);
@@ -262,14 +254,25 @@ export const damage_system = (world: World, delta: number): World => {
     const pd = get_component<PendingDamage>(new_world, entity, "PendingDamage");
     // check if targetable?
     const attrs = get_component<Attributes>(new_world, pd.target, "Attributes");
+    const health_now = Math.max(0, attrs.health_now - pd.damage);
     new_world = add_component(new_world, pd.target, {
       ...attrs,
       //TODO: apply defenses
-      health_now: Math.max(0, attrs.health_now - pd.damage),
+      health_now
     } as Attributes);
 
-    let log = `Character [${pd.source}] does ${pd.damage} damage to ${pd.target}${pd.is_crit ? " critical!" : ""}`
+    let log = `Character [${pd.source}] does ${pd.damage} damage to Character [${pd.target}]${pd.is_crit ? " critical!" : ""}`
     game_log.push(log)
+
+    if (health_now === 0) {
+      // stop current targets casts
+      // just remove the entity or just remove the TagTargetable component?
+      //TODO: stop incoming casts towards that target
+      // and retarget and recast the pending without triggering cooldown
+      new_world = add_component(new_world, pd.target, { type: "TagDead" })
+      new_world = remove_component(new_world, pd.target, "TagAlive");
+      game_log.push(`Character [${pd.source}] has died.`)
+    }
 
     //TODO:  detect death      
     new_world = remove_component(new_world, entity, "PendingDamage");
@@ -277,50 +280,77 @@ export const damage_system = (world: World, delta: number): World => {
   return new_world;
 }
 
+type PositionTuple = [number, Position]
+const get_target = (world: World, ability: AbilityDefinition, caster_team: "player" | "enemy"): Entity[] => {
+  let output: Entity[] = []
+  const target_positions: PositionTuple[] = _.map(query(world, ["TagTargetable", "TagAlive"]), (e: number): PositionTuple => [e, get_component<Position>(world, e, 'Position')]);
+  const teams = _.groupBy(target_positions, (tuple) => tuple[1].team)
+  const enemy = caster_team == "player" ? "enemy" : "player"
+  switch (ability.targetting) {
+    case TARGETTING.ENEMY_SINGLE:
+      // @ts-ignore
+      const target: PositionTuple = _.first(teams[enemy]);
+      output.push(target[0])
+      break;
+    case TARGETTING.FRIEND_ALL:
+      //@ts-ignore
+      output = teams[enemy];
+      break;
+
+    default:
+      break;
+  }
+  return output
+}
+
 const ability_system = (world: World, delta: number): World => {
   let new_world = { ...world }
-  const entities = query(world, ["Abilities", "NotCasting"]);
+  const entities = query(world, ["Abilities", "NotCasting", "TagAlive"]);
+  // targeting should be a different  system?
   for (const entity of entities) {
     const abilities = get_component<Abilities>(world, entity, "Abilities");
+    const caster = get_component<TagTargetable>(world, entity, "TagTargetable");
     const ability_name = _.first(abilities.abilities);
     if (ability_name) {
-      const fireball_def = get_spell_by_id(ability_name)
+      const ability_def = get_spell_by_id(ability_name)
       new_world = add_component(new_world, entity, {
         type: "Casting",
-        spell_id: fireball_def.id,
-        target: 1,
-        source: 1,
-        cast_max: fireball_def.cast_time * 1000,
-        cast_now: fireball_def.cast_time * 1000,
+        spell_id: ability_def.id,
+        target: get_target(world, ability_def, caster.team),
+        source: entity,
+        cast_max: ability_def.cast_time * 1000,
+        cast_now: ability_def.cast_time * 1000,
       })
       new_world = remove_component(new_world, entity, "NotCasting")
     }
   }
   return new_world;
 }
+
 const handle_spell_effect = (spell_cast: Casting) =>
   (world: World, spell_effect: AbilityEffect) => {
     let new_world = { ...world }
     switch (spell_effect.type) {
       case "DamageEffect":
-        // TODO: create a damage effect for each spell target
         spell_effect = spell_effect as DamageEffect
         let damage_instance: Entity
         let is_crit: boolean = false;
         // probably move into the system that handles the effect
-        [new_world, damage_instance] = create_entity(new_world);
         if (spell_effect.can_crit) {
           const attributes = get_component<Attributes>(world, spell_cast.source, "Attributes")
           is_crit = roll_critical(attributes.crit_chance)
         }
-        new_world = add_component(new_world, damage_instance, {
-          type: "PendingDamage",
-          damage: is_crit ? spell_effect.value * 2 : spell_effect.value,
-          target: spell_cast.target,
-          source: spell_cast.source,
-          // school
-          is_crit
-        })
+        new_world = spell_cast.target.reduce((world: World, target: Entity) => {
+          [world, damage_instance] = create_entity(world);
+          return add_component(world, damage_instance, {
+            type: "PendingDamage",
+            damage: is_crit ? spell_effect.value * 2 : spell_effect.value,
+            target: target,
+            source: spell_cast.source,
+            // school
+            is_crit
+          })
+        }, new_world)
         break;
       case "ApplyAura::PeriodicDamage":
         spell_effect = spell_effect as PeriodicDamageEffect
@@ -343,6 +373,36 @@ const handle_spell_effect = (spell_cast: Casting) =>
     return new_world
   }
 
+
+const periodic_system = (world: World, delta: number): World => {
+  let new_world = { ...world }
+  const entities = query(world, ["Aura_PeriodicDamage"]);
+  for (const entity of entities) {
+    const periodic_damage = get_component<Aura_PeriodicDamage>(world, entity, "Aura_PeriodicDamage");
+    const remaining = Math.min(0, periodic_damage.remainig - delta)
+    new_world = add_component(new_world, entity, {
+      ...periodic_damage,
+      remaining
+    })
+    // todo handle tick rate
+    if (delta > 1000) {
+      let damage_instance: Entity
+      [world, damage_instance] = create_entity(world);
+      new_world = add_component(new_world, damage_instance, {
+        type: "PendingDamage",
+        damage: periodic_damage.value,
+        target: entity,
+        source: periodic_damage.source,
+        // school
+      })
+    }
+    // todo tick
+    if (remaining === 0) {
+      new_world = remove_component(new_world, entity, "Aura_PeriodicDamage")
+    }
+  }
+  return new_world
+}
 const casting_system = (world: World, delta: number): World => {
   let new_world = { ...world }
   const entities = query(world, ["Casting"]);
@@ -352,7 +412,6 @@ const casting_system = (world: World, delta: number): World => {
     if (cast_now === 0) {
       const spell_def = get_spell_by_id(spell_cast.spell_id)
       new_world = spell_def.effect_on_hit.reduce(handle_spell_effect(spell_cast), world)
-
 
       // use a "state machine like change for this crap"
       new_world = remove_component(new_world, ent, "Casting");
@@ -373,11 +432,23 @@ const casting_system = (world: World, delta: number): World => {
   return new_world
 }
 
-const death_system = (world: World, delta: number): World => {
+const gameflow_system = (world: World, delta: number): World => {
   let new_world = { ...world }
   // alive tag
-  const entities = query(world, ["TagTargetable"]);
-  for (const entity of entities) {
+  const entities = query(world, ["TagTargetable", "TagAlive"]);
+  const teams = _(entities)
+    .map((ent: Entity) => get_component<TagTargetable>(new_world, ent, 'TagTargetable'))
+    .countBy('team')
+    .value()
+
+  //TODO: handle winning and stopping the sim
+  if (!teams.enemy) {
+    console.log("\n Player Wins!");
+    process.exit(0)
+  }
+  if (!teams.player) {
+    console.log("\n Enemy Wins!");
+    process.exit(0)
   }
   return new_world
 }
@@ -392,10 +463,11 @@ const loop = () => {
   world = ability_system(world, delta);
   world = casting_system(world, delta)
   world = cooldown_system(world, delta)
+  world = periodic_system(world, delta)
   world = damage_system(world, delta)
-  // world = death_system(world, delta)
-  // render_debug(world.entities)
+  world = gameflow_system(world, delta)
   render_system(world);
+  // combat log
   render(_.takeRight(game_log, 5).map((str, indx) => indx + ": " + str).join('\n'))
   next_frame = next_frame + RENDER_RATE
   last_frame = Date.now()
