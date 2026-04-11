@@ -9,7 +9,6 @@ import {
   try_get_component,
   game_log,
 } from "./ecs";
-import { init_entity } from "../lib/ecs.util.ts";
 import type {
   Attributes,
   Casting,
@@ -20,7 +19,6 @@ import type { Entity, World } from "./ecs";
 import { render, render_debug, render_buffer_flush } from "./render";
 
 let world = create_world()
-let init: Entity;
 let player: Entity;
 let enemy: Entity;
 
@@ -96,7 +94,6 @@ export const character_to_entity = (world: World, team: "player" | "enemy"): [Wo
   return [world, entity]
 }
 
-[world, init] = init_entity(world);
 [world, player] = character_to_entity(world, "player");
 [world, player] = character_to_entity(world, "player");
 [world, enemy] = character_to_entity(world, "enemy");

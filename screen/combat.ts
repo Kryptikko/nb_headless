@@ -8,8 +8,9 @@ import { entity_cast_bar } from "./components/cast_bar.ts";
 import status_bar from "./components/status_bar.ts";
 import { render, render_debug } from "../lib/render.ts";
 import { open_screen } from "../controller/screen.ts";
-import { game_log, create_world, type Entity, type World, combat_system } from "../lib/ecs.ts";
-import { init_entity, character_to_entity } from "../lib/ecs.util.ts";
+import { game_log, create_world, type Entity, type World, combat_system, get_component, query, type S_WorldState, WORLD_STATE } from "../lib/ecs.ts";
+import { character_to_entity } from "../lib/ecs.util.ts";
+import { STATUS_CODES } from "node:http";
 
 enum COMBAT_RESULT {
   ONGOING,
@@ -18,7 +19,6 @@ enum COMBAT_RESULT {
 }
 
 let _combat_state: World
-let init: Entity;
 
 type CombatState = {
   winner: COMBAT_RESULT,
@@ -34,7 +34,6 @@ let _local_state: CombatState = {
 
 const _init = (state: WorldState) => {
   _combat_state = create_world();
-  [_combat_state, init] = init_entity(_combat_state);
   _combat_state = _.reduce(state.party,
     (combat_world, id: string) => {
       let eid: Entity
@@ -58,6 +57,15 @@ const _clear = (world: WorldState) => {
   //TODO: set winner or loser in world state
 }
 
+const _is_combat_over = (combat: World): boolean => {
+  const entities = query(combat, ['S_WorldState']);
+  for (const entity of entities) {
+    const world_state = get_component<S_WorldState>(combat, entity, 'S_WorldState');
+    return (world_state.state === WORLD_STATE.END)
+  }
+  return false
+}
+
 const CombatScreen = (state: WorldState) => {
   // TODO: 
   // fetch encounter
@@ -65,9 +73,9 @@ const CombatScreen = (state: WorldState) => {
   // run simulation
   // render
   _combat_state = combat_system(_combat_state, state.delta);
-  if (_local_state.winner != COMBAT_RESULT.ONGOING) {
-    _local_state.winner == COMBAT_RESULT.ATTACKER_WIN ? render('PARTY') : render('ENEMIES')
-    // render('COMBAT OVER WINNER IS')
+  if (_is_combat_over(_combat_state)) {
+    // set world states winner
+    // wrap up the simulation and prompt the user to continue to the reward screen
     open_screen(state, SCREEN_IDS.combat_reward)
     return
   }

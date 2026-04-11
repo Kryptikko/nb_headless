@@ -1,5 +1,5 @@
 import type { Character } from "../types/Character";
-import { add_component, create_entity, type Entity, type World } from "./ecs";
+import { add_component, create_entity, get_component, query, WORLD_STATE, type Entity, type World } from "./ecs";
 
 export const character_to_entity = (world: World, character: Character, team: "player" | "enemy"): [World, Entity] => {
   let entity: Entity;
@@ -35,14 +35,5 @@ export const character_to_entity = (world: World, character: Character, team: "p
     type: "TagAlive",
   })
 
-  return [world, entity]
-}
-
-export const init_entity = (world: World): [World, Entity] => {
-  let entity: Entity;
-  [world, entity] = create_entity(world);
-  world = add_component(world, entity, {
-    type: "TagInitialize"
-  })
   return [world, entity]
 }

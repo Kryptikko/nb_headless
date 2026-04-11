@@ -161,10 +161,22 @@ export interface NotCasting extends Component {
   type: "NotCasting";
 }
 
-export interface TagInitialize extends Component {
-  type: "TagInitialize";
+export interface Tag_WorldInitialize extends Component {
+  type: "Tag_Initialize";
 }
 
+export enum WORLD_STATE {
+  INIT,
+  RUN,
+  PAUSE,
+  END
+}
+
+export interface S_WorldState extends Component {
+  type: "S_SystemState"
+  state: WORLD_STATE
+  winner: "player" | "enemy" | "ongoing"
+}
 
 export interface Aura_PeriodicDamage extends Component {
   type: "Aura_PeriodicDamage";
@@ -242,14 +254,36 @@ const roll_damage = (min: number, max: number): number => {
 
 const init_system = (world: World, delta: number): World => {
   let new_world = { ...world }
-  const entities = query(world, ["TagInitialize"]);
-  const abilities = query(world, ["Abilities"]);
-  for (const entity of entities) {
-    // initialize
-    // init abilities
-    // apply modifiers to stats
-    new_world = destroy_entity(new_world, entity)
+  const world_state_entity = query(world, ["S_WorldState"]);
+  if (_.isEmpty(world_state_entity)) {
+    // init other entities required for the simulation
+    let entity: Entity;
+    [new_world, entity] = create_entity(new_world);
+    new_world = add_component(new_world, entity, {
+      type: "S_WorldState",
+      state: WORLD_STATE.RUN,
+      winner: "ongoing"
+    })
+    return new_world
   }
+
+  const entities = query(world, ["TagTargetable", "TagAlive"]);
+  const teams = _(entities)
+    .map((ent: Entity) => get_component<TagTargetable>(new_world, ent, 'TagTargetable'))
+    .countBy('team')
+    .value()
+
+  if (teams.enemy && teams.player)
+    return new_world
+
+  world_state_entity.forEach((entity: number) => {
+    const world_state = get_component<S_WorldState>(new_world, entity, 'S_WorldState')
+    new_world = add_component(new_world, entity, {
+      ...world_state,
+      state: WORLD_STATE.END,
+      winner: teams.player ? "player" : "enemy"
+    })
+  })
 
   return new_world
 }
@@ -469,18 +503,21 @@ const gameflow_system = (world: World, delta: number): World => {
     .countBy('team')
     .value()
 
-  //TODO: handle winning and stopping the sim
-  if (!teams.enemy) {
-    console.log("\n Player Wins!");
-    process.exit(0)
-  }
-  if (!teams.player) {
-    console.log("\n Enemy Wins!");
-    process.exit(0)
-  }
+  if (teams.enemy && teams.player)
+    return new_world
+
+  const state_ent = query(world, ["S_WorldState"]);
+  assert(_.isEmpty(state_ent), 'The Combat Simulation was not properly initialized')
+  state_ent.forEach((entity: number) => {
+    const world_state = get_component<S_WorldState>(new_world, entity, 'S_WorldState')
+    new_world = add_component(new_world, entity, {
+      ...world_state,
+      state: WORLD_STATE.END,
+      winner: teams.player ? "player" : "enemy"
+    })
+  })
   return new_world
 }
-
 
 export const combat_system = (world: World, delta: number): World => {
   // world = targeting_system(world, delta);
@@ -490,6 +527,6 @@ export const combat_system = (world: World, delta: number): World => {
   world = cooldown_system(world, delta)
   world = periodic_system(world, delta)
   world = damage_system(world, delta)
-  world = gameflow_system(world, delta)
+  // world = gameflow_system(world, delta)
   return world
 }
