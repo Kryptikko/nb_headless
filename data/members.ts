@@ -1,6 +1,6 @@
 import { PROFESSION, type Character, default_character } from "../types/Character";
 
-const characters: Character[] = [
+export const characters: Character[] = [
   {
     ...default_character,
     id: "char_001",
