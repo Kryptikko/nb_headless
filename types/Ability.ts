@@ -1,62 +1,43 @@
-export enum COMBAT_EFFECT_TAGS {
-  CAN_CRIT,
-  CAN_STACK,
-  MAGIC_DAMAGE,
-  PHYSICAL_DAMAGE,
+export enum TARGETTING {
+  ENEMY_SINGLE,
+  ENEMY_ALL,
+  FRIEND_SINGLE,
+  FRIEND_ALL,
 }
 
-export enum ABILITY {
-  DEFAULT,
-  HEALING_WORD,
-  CLEAVE,
-  BLIZZARD,
-  MELEE,
-  FIREBOLT,
+export type DamageEffect = {
+  type: "DamageEffect"
+  school: string // todo: enum
+  value: number
+  mod: number
+  can_crit: boolean // take crit chance from player
 }
-
-export enum COMBAT_EFFECT {
-  PHYSICAL_DAMAGE,
-  MAGIC_DAMAGE,
-  HEAL,
-  BURNING,
-  BURN,
+// to be implemented
+export type PeriodicDamageEffect = {
+  type: "ApplyAura::PeriodicDamage"
+  school: string
+  value: number
+  mod: number
+  tick_rate: number
+  can_crit: boolean
 }
-
-export enum TARGET_TYPE {
-  ENEMY,
-  FRIEND,
+// to be implemented
+export type StunEffect = {
+  type: "ApplyAura::Stun"
+  value: number
+  chance: number
 }
+export type AbilityEffect = DamageEffect | PeriodicDamageEffect | StunEffect
 
-type BaseContext = {
+export type AbilityDefinition = {
   id: string
-  source: string // caster id
-  target: string // target id
-}
-export type CombatAbilityContext = BaseContext & {
-  cooldown_now: number
-  ability_id: ABILITY // abiity id can be a composition of source+ability+effec
-}
-
-export type CombatEffect = {
-  handler: COMBAT_EFFECT,
-  base_power: number,
-  tags: Array<COMBAT_EFFECT_TAGS>,
-  duration: number,
-  duration_now: number,
-  tick_count: number,
-  stack: number,
-  max_stack: number,
-  visual?: string
-}
-
-export type CombatEffectContext = BaseContext & CombatEffect
-
-export type CombatAbility = {
-  id: ABILITY
   display_name: string
-  // visual_icon: string //texture icon
-  target_type: TARGET_TYPE
-  target_count: number
-  cooldown: number,
-  effects: Array<CombatEffect>
+  display_description: string
+  cooldown: number
+  cast_time: number
+  vfx: string
+  targetting: TARGETTING // todo: enum
+  // trigger // on hit, on being hit, Passive, Active
+  // flags: string[]
+  effect_on_hit: AbilityEffect[]
 }

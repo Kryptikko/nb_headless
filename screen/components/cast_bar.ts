@@ -1,6 +1,5 @@
 import _ from "lodash"
-import get_ability from "../../data/abilities"
-import type { CombatAbilityContext } from "../../types/Ability"
+import { try_get_component, type Casting, type Entity, type World } from "../../lib/ecs"
 
 const TPL_EMPTY = " "
 const TPL_FULL = "-"
@@ -13,19 +12,27 @@ const TPL_FULL = "-"
 // ■■■■■□□□□□
 
 
-export const ability_cast_bar = (ctx: CombatAbilityContext) => {
-  const ability = get_ability(ctx.ability_id)
-  let template = "          "
-  let percent = _.clamp(Math.ceil((ctx.cooldown_now / ability.cooldown) * 10), 0, 10)
-  template = TPL_FULL.repeat(percent) + TPL_EMPTY.repeat(10 - percent)
-  return '[' + template + ']';
-
-}
+// export const ability_cast_bar = (ctx: CombatAbilityContext) => {
+//   const ability = get_ability(ctx.ability_id)
+//   let template = "          "
+//   let percent = _.clamp(Math.ceil((ctx.cooldown_now / ability.cooldown) * 10), 0, 10)
+//   template = TPL_FULL.repeat(percent) + TPL_EMPTY.repeat(10 - percent)
+// }
 
 export const cast_bar = (duration: number, start_at: number, game_now: number) => {
   let template = "          "
   if (game_now > start_at && game_now < (start_at + duration)) {
     let percent = Math.ceil(((game_now - start_at) / duration) * 10)
+    template = TPL_FULL.repeat(percent) + TPL_EMPTY.repeat(10 - percent)
+  }
+  return '[' + template + ']';
+}
+
+export const entity_cast_bar = (world: World, entity: Entity): string => {
+  const cast = try_get_component<Casting>(world, entity, "Casting")
+  let template = "          "
+  if (cast) {
+    let percent = _.clamp(Math.ceil((cast.cast_now / cast.cast_max) * 10), 0, 10)
     template = TPL_FULL.repeat(percent) + TPL_EMPTY.repeat(10 - percent)
   }
   return '[' + template + ']';

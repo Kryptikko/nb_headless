@@ -1,113 +1,83 @@
-import { ABILITY, COMBAT_EFFECT, TARGET_TYPE, type CombatAbility } from "../types/Ability";
+import assert from "node:assert";
+import type { AbilityDefinition } from "../types/Ability";
+import { TARGETTING } from "../types/Ability";
 
-const _ability_defaults: CombatAbility = {
-  id: ABILITY.DEFAULT,
-  display_name: "!!DEFAULT!!",
-  target_type: TARGET_TYPE.ENEMY,
-  target_count: 1,
-  effects: [],
-  cooldown: 0,
+const MeleeDef: AbilityDefinition = {
+  id: "melee",
+  display_name: "Melee Hit",
+  display_description: "",
+  targetting: TARGETTING.ENEMY_SINGLE,
+  // trigger: "Trigger::Cast", // or tag? Trigger:Passive, Trigger:OnAttack
+  cooldown: 1,
+  cast_time: 0,
+  vfx: "✊",
+  effect_on_hit: [
+    {
+      type: "DamageEffect",
+      school: "Physical",
+      value: 4,
+      mod: 0.123,
+      can_crit: true, // use flags instead?
+    }]
 }
-// abilities work by having generic behaviour
-const Blizzard: CombatAbility = Object.freeze({
-  ..._ability_defaults,
-  id: ABILITY.BLIZZARD,
-  display_name: "Blizzard",
-  target_type: TARGET_TYPE.ENEMY,
-  target_count: 4,
-  effects: [{
-    handler: COMBAT_EFFECT.MAGIC_DAMAGE,
-    base_power: 1,
-    tags: [],
-    duration: 0,
-    duration_now: 0,
-    stack: 0,
-    max_stack: 0
-  }],
-  cooldown: 4000
-})
-// const HealingWord: CombatAbility = Object.freeze({
-//   ..._ability_defaults,
-//   id: ABILITY.HEALING_WORD,
-//   display_name: "Healing Word",
-//   target_type: TARGET_TYPE.FRIEND,
-//   target_count: 1,
-//   effects: [{
-//     handler: COMBAT_EFFECT.HEAL,
-//     base_power: 1,
-//   }],
-//   cooldown: 3000
-// })
-const MeleeAttack: CombatAbility = Object.freeze({
-  ..._ability_defaults,
-  id: ABILITY.MELEE,
-  display_name: "Melee",
-  target_type: TARGET_TYPE.ENEMY,
-  target_count: 1,
-  effects: [{
-    handler: COMBAT_EFFECT.PHYSICAL_DAMAGE,
-    base_power: 1,
-    tags: [],
-    duration: 0,
-    duration_now: 0,
-    stack: 0,
-    max_stack: 0
-  }],
-  cooldown: 2000
-})
-const Cleave: CombatAbility = Object.freeze({
-  ..._ability_defaults,
-  id: ABILITY.CLEAVE,
-  display_name: "Cleave",
-  target_type: TARGET_TYPE.ENEMY,
-  target_count: 2,
-  effects: [{
-    handler: COMBAT_EFFECT.PHYSICAL_DAMAGE,
-    base_power: 1,
-    tags: [],
-    duration: 0,
-    duration_now: 0,
-    stack: 0,
-    max_stack: 0
-  }],
-  cooldown: 3000
-})
-const FireBolt: CombatAbility = Object.freeze({
-  ..._ability_defaults,
-  id: ABILITY.FIREBOLT,
-  display_name: "Fire Bolt",
-  target_type: TARGET_TYPE.ENEMY,
-  target_count: 1,
-  effects: [{
-    handler: COMBAT_EFFECT.BURN,
-    base_power: 2,
-    tags: [],
-    duration: 0,
-    duration_now: 0,
-    stack: 0,
-    max_stack: 0
-  }, {
-    handler: COMBAT_EFFECT.BURNING,
-    base_power: 1,
-    tick_count: 4,
-    tags: [],
-    duration: 2000,
-    duration_now: 0,
-    max_stack: 1,
-    stack: 0,
-    visual: "b"
-  }],
-  cooldown: 3000
-})
 
-const repo: Record<ABILITY, CombatAbility> = Object.freeze({
-  [ABILITY.DEFAULT]: _ability_defaults,
-  [ABILITY.CLEAVE]: Cleave,
-  [ABILITY.HEALING_WORD]: _ability_defaults,
-  // [ABILITY.HEALING_WORD]: HealingWord,
-  [ABILITY.BLIZZARD]: Blizzard,
-  [ABILITY.MELEE]: MeleeAttack,
-  [ABILITY.FIREBOLT]: FireBolt
+const CleaveDef: AbilityDefinition = {
+  id: "cleave",
+  display_name: "Cleave Hit",
+  display_description: "",
+  targetting: TARGETTING.ENEMY_SINGLE,
+  // trigger: "Trigger::Cast", // or tag? Trigger:Passive, Trigger:OnAttack
+  cooldown: 2,
+  cast_time: 0.5,
+  vfx: "✊",
+  effect_on_hit: [
+    {
+      type: "DamageEffect",
+      school: "Physical",
+      value: 10,
+      mod: 0.123,
+      can_crit: true, // use flags instead?
+    }]
+}
+
+const FireballDef: AbilityDefinition = {
+  id: "fireball",
+  display_name: "Fireball",
+  display_description: "Big Balls of Fire",
+  targetting: TARGETTING.ENEMY_SINGLE,
+  // trigger: "Trigger::Cast", // or tag? Trigger:Passive, Trigger:OnAttack
+  cooldown: 1,
+  cast_time: 2,
+  vfx: "🔥",
+  effect_on_hit: [
+    {
+      type: "DamageEffect",
+      school: "Fire",
+      value: 10,
+      mod: 0.123,
+      can_crit: true, // use flags instead?
+    },
+    {
+      type: "ApplyAura::PeriodicDamage",
+      school: "Fire",
+      value: 2,
+      mod: 0.01,
+      tick_rate: 2,
+      can_crit: false
+    }, {
+      type: "ApplyAura::Stun",
+      value: 2,
+      chance: 0.1
+    }]
+}
+
+const repo: Record<string, AbilityDefinition> = Object.freeze({
+  'fireball': FireballDef,
+  'melee': MeleeDef,
+  'cleave': CleaveDef,
 })
-const get_ability = (id: ABILITY): CombatAbility => repo[id]
+const get_ability = (id: string): AbilityDefinition => {
+  assert(repo[id], 'Ability Definition for id: ' + id + ' does not exist')
+  return repo[id]
+}
 export default get_ability

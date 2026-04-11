@@ -4,7 +4,6 @@ import { SCREEN_IDS, type WorldState, type Screen, _empty_screen_fn } from '../t
 import { open_screen } from "../controller/screen";
 import { render, render_debug } from "../lib/render";
 import { default_character, type Character } from "../types/Character";
-import { ABILITY } from "../types/Ability";
 
 const _names: Array<string> = [
   'Ciririla',
@@ -33,7 +32,6 @@ const _generate_member = (_state: WorldState): Character => {
     def: 1,
     mgc: 1,
     ini: 1,
-    ability_primary: ABILITY.MELEE,
   }
 }
 

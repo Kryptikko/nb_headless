@@ -1,22 +1,7 @@
-import { ABILITY } from "../types/Ability"
-import type { Character } from "../types/Character"
+import { default_character, type Character } from "../types/Character"
 
-const _default_mob: Character = {
-  id: '',
-  display_name: "",
-  hp_max: 10,
-  hp_now: 10,
-  level: 1,
-  xp: 0,
-  att: 1,
-  def: 1,
-  mgc: 1,
-  ini: 2,
-  ability_primary: ABILITY.MELEE,
-  active_effect: []
-}
 export const Goblin: Character = {
-  ..._default_mob,
+  ...default_character,
   display_name: "Golbin",
   hp_max: 20,
   hp_now: 20,
@@ -26,10 +11,10 @@ export const Goblin: Character = {
   def: 1,
   mgc: 1,
   ini: 2,
-  ability_primary: ABILITY.MELEE
+  ability_primary: 'melee'
 }
 export const Troll: Character = {
-  ..._default_mob,
+  ...default_character,
   display_name: "Troll",
   hp_max: 60,
   hp_now: 60,
@@ -39,5 +24,5 @@ export const Troll: Character = {
   def: 2,
   mgc: 1,
   ini: 2,
-  ability_primary: ABILITY.CLEAVE
+  ability_primary: 'cleave'
 }

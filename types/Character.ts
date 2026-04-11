@@ -1,11 +1,5 @@
-import { ABILITY, type CombatEffect } from "./Ability"
 import { default_equipment, EQUIPMENT_SLOT, type Equipment } from "./Equipment"
 import type { CharacterModifier } from "./Modifier"
-
-export type CombatEffectHandler = {
-  apply: (source: Character, target: Character, context: CombatEffect) => void
-  process: (delta: number, source: Character, target: Character, context: CombatEffect) => void
-}
 
 export enum PROFESSION {
   FIGHTER,
@@ -47,11 +41,11 @@ export type Character = {
   def: number
   mgc: number
   ini: number
-  ability_primary: ABILITY // move to just an id
+  ability_primary: string // move to just an id
   // combat overhead
   // ability_current: CombatEffectContext
   // active_effects: Array<CombatEffectContext>
-  aura: Array<CharacterAura>
+  // aura: Array<CharacterAura> // auras make sense in combat only
   //TODO hava a global store and just apply ids
   equipment_armor: Equipment
   equipment_weapon: Equipment
@@ -76,8 +70,8 @@ export const default_character: Character = {
   base_def: 1,
   base_mgc: 1,
   base_ini: 1,
-  ability_primary: ABILITY.DEFAULT,
-  aura: [],
+  ability_primary: "fireball",
+  // aura: [],
   equipment_accessory: { ...default_equipment, slot: EQUIPMENT_SLOT.ACCESSORY },
   equipment_armor: { ...default_equipment, slot: EQUIPMENT_SLOT.ARMOR },
   equipment_weapon: { ...default_equipment, slot: EQUIPMENT_SLOT.WEAPON },
