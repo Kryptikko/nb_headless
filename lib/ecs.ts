@@ -2,9 +2,10 @@ import _ from "lodash";
 import assert from "node:assert";
 import get_ability from "../data/abilities";
 import { TARGETTING, type AbilityDefinition, type AbilityEffect, type DamageEffect, type PeriodicDamageEffect } from "../types/Ability";
+import logger from "./logging";
 
-const system_log: string[] = []
 export const game_log: string[] = []
+export const damage_log: PendingDamage[] = []
 
 // TODO: Migrate once setteled on a solid set
 // enum C {
@@ -161,10 +162,6 @@ export interface NotCasting extends Component {
   type: "NotCasting";
 }
 
-export interface Tag_WorldInitialize extends Component {
-  type: "Tag_Initialize";
-}
-
 export enum WORLD_STATE {
   INIT,
   RUN,
@@ -256,6 +253,7 @@ const init_system = (world: World, delta: number): World => {
   let new_world = { ...world }
   const world_state_entity = query(world, ["S_WorldState"]);
   if (_.isEmpty(world_state_entity)) {
+    logger('Starting a combat');
     // init other entities required for the simulation
     let entity: Entity;
     [new_world, entity] = create_entity(new_world);
@@ -278,6 +276,7 @@ const init_system = (world: World, delta: number): World => {
 
   world_state_entity.forEach((entity: number) => {
     const world_state = get_component<S_WorldState>(new_world, entity, 'S_WorldState')
+    logger('Ending combat winner - ' + teams.player ? "player" : "enemy");
     new_world = add_component(new_world, entity, {
       ...world_state,
       state: WORLD_STATE.END,
@@ -325,6 +324,7 @@ export const damage_system = (world: World, _delta: number): World => {
 
     let log = `Character [${pd.source}] does ${pd.damage} damage to Character [${pd.target}]${pd.is_crit ? " critical!" : ""}`
     game_log.push(log)
+    logger(log);
 
     if (health_now === 0) {
       // stop current targets casts
@@ -336,6 +336,7 @@ export const damage_system = (world: World, _delta: number): World => {
       game_log.push(`Character [${pd.source}] has died.`)
     }
 
+    damage_log.push({ ...pd })
     //TODO:  detect death      
     new_world = remove_component(new_world, entity, "PendingDamage");
   }
@@ -520,8 +521,8 @@ const gameflow_system = (world: World, delta: number): World => {
 }
 
 export const combat_system = (world: World, delta: number): World => {
-  // world = targeting_system(world, delta);
   world = init_system(world, delta)
+  // world = targeting_system(world, delta);
   world = ability_system(world, delta);
   world = casting_system(world, delta)
   world = cooldown_system(world, delta)

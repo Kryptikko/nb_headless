@@ -1,4 +1,4 @@
-import _ from "lodash"
+import _, { forIn } from "lodash"
 import { styleText } from "node:util";
 import type { Character } from "../types/Character"
 import { _empty_screen_fn, SCREEN_IDS, type Screen, type WorldState } from "../types/WorldState"
@@ -8,7 +8,16 @@ import { entity_cast_bar } from "./components/cast_bar.ts";
 import status_bar from "./components/status_bar.ts";
 import { render, render_debug } from "../lib/render.ts";
 import { open_screen } from "../controller/screen.ts";
-import { game_log, create_world, type Entity, type World, combat_system, get_component, query, type S_WorldState, WORLD_STATE } from "../lib/ecs.ts";
+import {
+  game_log,
+  damage_log,
+  create_world,
+  combat_system,
+  get_component,
+  query,
+  WORLD_STATE
+} from "../lib/ecs.ts";
+import type { Entity, World, S_WorldState, PendingDamage } from "../lib/ecs.ts";
 import { character_to_entity } from "../lib/ecs.util.ts";
 import { STATUS_CODES } from "node:http";
 
@@ -66,6 +75,23 @@ const _is_combat_over = (combat: World): boolean => {
   return false
 }
 
+const damage_meter = () => {
+  const sources = _.groupBy(damage_log, 'source') || {};
+  let output = ""
+  return _(sources)
+    .mapValues((value: PendingDamage[]) => {
+      return _.sumBy(value, (pd: PendingDamage) => pd.damage)
+    })
+    .toPairs()
+    .sortBy(tuple => tuple[1])
+    .reverse()
+    .map(([entity, damage_done], idx, obj) => {
+      const ch = _.get(_local_state.player_cache, entity) || _.get(_local_state.enemy_cache, entity)
+      return `${entity}: ${ch.display_name} ${damage_done}`
+    })
+    .join('\n')
+}
+
 const CombatScreen = (state: WorldState) => {
   // TODO: 
   // fetch encounter
@@ -117,10 +143,10 @@ const CombatScreen = (state: WorldState) => {
     body.push(srow)
   }
   const dynamic_width = _.maxBy(body, (line) => line.length)?.length || 0
-
   render(header);
   render(_.pad(sub_header, dynamic_width, ' ') + '\n');
   render(body.join('\n'))
+  render(damage_meter())
   render(`
 
 [Turn Log] 3/${game_log.length}`);
