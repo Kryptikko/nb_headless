@@ -15,11 +15,14 @@ import {
   combat_system,
   get_component,
   query,
-  WORLD_STATE
+  WORLD_STATE,
+  create_entity,
+  add_component
 } from "../lib/ecs.ts";
 import type { Entity, World, S_WorldState, PendingDamage } from "../lib/ecs.ts";
 import { character_to_entity } from "../lib/ecs.util.ts";
 import { STATUS_CODES } from "node:http";
+import { entity_health_bar } from "./components/health_bar.ts";
 
 enum COMBAT_RESULT {
   ONGOING,
@@ -77,7 +80,6 @@ const _is_combat_over = (combat: World): boolean => {
 
 const damage_meter = () => {
   const sources = _.groupBy(damage_log, 'source') || {};
-  let output = ""
   return _(sources)
     .mapValues((value: PendingDamage[]) => {
       return _.sumBy(value, (pd: PendingDamage) => pd.damage)
@@ -86,10 +88,52 @@ const damage_meter = () => {
     .sortBy(tuple => tuple[1])
     .reverse()
     .map(([entity, damage_done], idx, obj) => {
+      const max = _.maxBy(obj, item => item[1])
       const ch = _.get(_local_state.player_cache, entity) || _.get(_local_state.enemy_cache, entity)
-      return `${entity}: ${ch.display_name} ${damage_done}`
+      return [
+        idx + 1,
+        `: [${entity}]`,
+        _.padEnd(ch.display_name, 40, ' '),
+        _.pad(damage_done + "", 4, ' '),
+        //@ts-ignore
+        entity_health_bar(damage_done, max[1], 20)
+      ].join('')
     })
     .join('\n')
+}
+
+const toggle_pause = () => {
+  let entity: Entity
+  const w_entity = _.first(query(_combat_state, ['S_WorldState']));
+  if (!w_entity)
+    return
+  const component = get_component<S_WorldState>(_combat_state, w_entity, 'S_WorldState')
+  if (![WORLD_STATE.PAUSE, WORLD_STATE.RUN].includes(component.state))
+    return
+
+  [_combat_state, entity] = create_entity(_combat_state);
+  _combat_state = add_component(_combat_state, entity, {
+    type: "Command_StatusChange",
+    value: WORLD_STATE.PAUSE ? WORLD_STATE.RUN : WORLD_STATE.PAUSE
+  })
+  return _combat_state;
+}
+
+const _handle_input = (state: WorldState) => {
+  switch (state.input.toLocaleLowerCase()) {
+    case "p":
+      toggle_pause()
+      break;
+    case "r":
+      if (_is_combat_over(_combat_state)) {
+        open_screen(state, SCREEN_IDS.combat_reward)
+      }
+      break;
+    default:
+      break;
+  }
+  state.input = ""
+  return
 }
 
 const CombatScreen = (state: WorldState) => {
@@ -98,17 +142,18 @@ const CombatScreen = (state: WorldState) => {
   // handle input 
   // run simulation
   // render
+  _handle_input(state);
   _combat_state = combat_system(_combat_state, state.delta);
-  if (_is_combat_over(_combat_state)) {
-    // set world states winner
-    // wrap up the simulation and prompt the user to continue to the reward screen
-    open_screen(state, SCREEN_IDS.combat_reward)
-    return
-  }
 
   // RENDER
   const header = styleText('gray', '[Start Dungeon Group]')
   const sub_header = `=== ${dungeon_floor_1.display_name} ===`
+  const footer = [
+    "",
+    "============================================================",
+    "press 'p' to pause/resume",
+    _is_combat_over(_combat_state) ? "press 'r' for rewards" : ""
+  ].join('\n')
   const body: Array<string> = [];
   // const entities = query(_combat_state, ["Attributes", "TagTargetable"]);
   const len = Math.max(_.size(_local_state.enemy_cache), _.size(_local_state.player_cache))
@@ -149,10 +194,12 @@ const CombatScreen = (state: WorldState) => {
   render(damage_meter())
   render(`
 
-[Turn Log] 3/${game_log.length}`);
+[Turn Log] 4/${game_log.length}`);
   _.takeRight(game_log, 4).map(log => render(log))
+  render(footer)
   return state
 }
+
 
 const screen: Screen = {
   init: _init,

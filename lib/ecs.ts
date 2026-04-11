@@ -3,6 +3,7 @@ import assert from "node:assert";
 import get_ability from "../data/abilities";
 import { TARGETTING, type AbilityDefinition, type AbilityEffect, type DamageEffect, type PeriodicDamageEffect } from "../types/Ability";
 import logger from "./logging";
+import { render, render_debug } from "./render";
 
 export const game_log: string[] = []
 export const damage_log: PendingDamage[] = []
@@ -158,6 +159,11 @@ export interface Position extends Component {
 //   auras: Entity[]
 // }
 
+export interface Command_StatusChange extends Component {
+  type: "Command_StatusChange"
+  value: WORLD_STATE
+}
+
 export interface NotCasting extends Component {
   type: "NotCasting";
 }
@@ -259,7 +265,7 @@ const init_system = (world: World, delta: number): World => {
     [new_world, entity] = create_entity(new_world);
     new_world = add_component(new_world, entity, {
       type: "S_WorldState",
-      state: WORLD_STATE.RUN,
+      state: WORLD_STATE.PAUSE,
       winner: "ongoing"
     })
     return new_world
@@ -520,14 +526,49 @@ const gameflow_system = (world: World, delta: number): World => {
   return new_world
 }
 
+export const pause_system = (world: World, delta: number): World => {
+  let new_world = { ...world }
+  const entities = query(world, ['Command_StatusChange']);
+  const state_entities = query(world, ['S_WorldState']);
+  for (const entity of entities) {
+    const input = get_component<Command_StatusChange>(world, entity, 'Command_StatusChange');
+    new_world = remove_component(new_world, entity, 'Command_StatusChange')
+
+    const state_ent = _.head(state_entities);
+    if (!state_ent) return new_world
+    const state = get_component<S_WorldState>(new_world, state_ent, 'S_WorldState');
+    new_world = add_component(new_world, state_ent, {
+      ...state,
+      // TODO: Handle the other world states
+      state: input.value
+    })
+
+  }
+  return new_world
+}
+
+export const combat_simulation_system = (world: World, delta: number): World => {
+  const entities = query(world, ['S_WorldState']);
+  const entity = _.head(entities);
+  if (!entity) return world;
+  const state = get_component<S_WorldState>(world, entity, 'S_WorldState');
+
+  if (state.state === WORLD_STATE.RUN) {
+    world = ability_system(world, delta);
+    world = casting_system(world, delta)
+    world = cooldown_system(world, delta)
+    world = periodic_system(world, delta)
+    world = damage_system(world, delta)
+  }
+
+  return world
+}
+
 export const combat_system = (world: World, delta: number): World => {
   world = init_system(world, delta)
   // world = targeting_system(world, delta);
-  world = ability_system(world, delta);
-  world = casting_system(world, delta)
-  world = cooldown_system(world, delta)
-  world = periodic_system(world, delta)
-  world = damage_system(world, delta)
+  world = pause_system(world, delta)
+  world = combat_simulation_system(world, delta)
   // world = gameflow_system(world, delta)
   return world
 }
