@@ -6,7 +6,8 @@ For now a Persona has a Character (1 to 1 relation).
 ## Leveling
 Characters can level when reaching certain experience (xp) threasholds.
 Leveling means increasing base attributes and unlocking training points (tp).
-XP is rewarded from dungeon runs and activities like leveling and questing.
+
+## Death Penalties
 
 ## Training Points
 The player can increase the effectiveness of a Characters ability or learn new abilities using training points.

@@ -14,6 +14,7 @@ ${styleText('gray', '[Home State]')}
 [${styleText('underline', 'R')}oster] 
 `
   render(template);
+
   switch (state.input.toLocaleLowerCase()) {
     case "s":
       open_screen(state, SCREEN_IDS.dungeon_combat)

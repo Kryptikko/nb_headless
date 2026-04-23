@@ -10,7 +10,7 @@ const hbox = (...args: Array<string>): string => {
   return _(args)
     .map(arg => {
       let split = _.split(arg, '\n')
-      split = _.concat(split, Array(height - split.length).fill(''))
+      split = _.concat(split, Array(height - split.length - 1).fill(''))
       return split
     })
     .unzip()

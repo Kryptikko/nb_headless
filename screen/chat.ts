@@ -6,6 +6,7 @@ import { render } from "../lib/render";
 import type { Character } from "../types/Character";
 import container from "./components/container";
 
+
 type LocalState = {
   chat_log: Array<string>
   dialogue: Record<string, ChatNode>

@@ -31,3 +31,21 @@ Breakpoints:
  - norming - 30% - 40% of LI per battle
  - performing - 80% of LI per battle
  <!-- - adjourning -->
+
+## Cohesion v2 (cohesiveness):
+### Abstract
+
+Cohesion is the act, state, or force of sticking together, forming a united, consistent, or connected whole
+The way members of a group connect and act as one.
+The situation when the members of a group or society are united.
+
+High Cohesion
+- less tension buildup
+Group think
+reduce innovation?
+Directionality: Some evidence suggests performance influences cohesion more than the reverse in certain settings.
+
+Cohesion is a resource that effects the xp gain by characters
+NOTE: this confuses the line between persona and character
+
+
