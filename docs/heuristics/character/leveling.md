@@ -9,15 +9,19 @@ TODO: Should we bother resetting the xp?
 
 ## XP Reward
 XP is rewarded from dungeon runs and activities like leveling and questing.
-gt
+- failed combat encounters grand xp aswell as successful ones
+- Should activities provide a range of expirience
+
+## Activity Diminishing returns and boosting
+
+## Cohesion bonus
 
 ## Balancing gain and difficulty
 XP from mobbing is a function of their difficulty level.
 Difficulty level allows for a combat budget to be allocated.
 
-## Combat Budget
+## Power Budget (estimated character power)
 This is a statistic that combines the Effective Health(EH) and Effective Damage(ED) of a character.
-
 NOTE: At different level ranges there should be a range of available encounter difficulties
 
 ## Power gain when Leveling

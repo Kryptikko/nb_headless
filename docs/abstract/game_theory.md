@@ -1,4 +1,5 @@
 # Game Theory Strategies
+Explore for expanding AI behaviour?
 
 Cooperation vs Cheating 
 Receprical behaviour
