@@ -21,7 +21,6 @@ import {
 } from "../lib/ecs.ts";
 import type { Entity, World, S_WorldState, PendingDamage } from "../lib/ecs.ts";
 import { character_to_entity } from "../lib/ecs.util.ts";
-import { STATUS_CODES } from "node:http";
 import { entity_health_bar } from "./components/health_bar.ts";
 
 enum COMBAT_RESULT {

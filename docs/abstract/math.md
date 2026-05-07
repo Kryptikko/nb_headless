@@ -65,3 +65,25 @@ This system can be applied as a shield block mechanic or spell resistance instea
 
 ## Defense - Healing
 Healing output should be balanced around the damage capability of the character.
+
+
+
+# MVP targts
+
+## Option 1
+level as a scaler example 
+LVL / 20 = Mod
+
+
+attack 
+ATK + (ATK + LVL) * ATK * LVL / 1024
+where max level is 1024?
+100 + (100 + 10) * 100 * 10 / 1024
+100 + 110  = 210
+100 + 120 * 120 * 10/1
+100 + 144 = 244
+
+(512 - DEF) / 512
+
+defense are a function of gear + basic stat + level
+

@@ -6,3 +6,15 @@ When completing a full run you get Guild Point rewards and extra equipment rewar
 # Dungeon rewards
 # Dungeon configuration
 # Dungeon randomisation
+
+# Dungeon Achievments
+Achievments should result in guild progression
+- 1 shot a target
+- first kills
+
+- Bounties
+
+TODO
+balance scarsity of equipment
+
+# 
