@@ -80,3 +80,84 @@ Examples of incombat events:
   - lowers everyones cohesion, spikes tension
   - debuffs perfomance for the duraiton of the encounter
 Combat Persona events buffs should differ from character abilities (they should be mostly % modifiers)
+
+## Ability Types
+### Spell
+
+### Attack
+TODO: Range weapons specific behaviour
+Melee abilities can be used only while on the frontline
+Require specific type of weapon
+Uses attack speed of weapons
+Attacks continue while attack attack ability is on cooldown
+
+### Passive
+Passive triggers
+Constant bonus
+on ability cast (source or target)
+on ability hit (source or target)
+on ability crit (source or target)
+
+## Combat Mechanics
+- Direct Damage
+- Direct Healing
+
+- Critical Chance increase
+- Critical Damage increase
+ 
+- Overtime Damage
+- Overtime Healing
+
+- Increase Damage Modifier 
+- Decrease Damage Modifier 
+
+- Max Health increase
+- Max Health decrease
+
+- stun 
+  - silence (partial stun, on specific type of ability)
+  - disarm (partial stun)
+- double hit
+
+- Cooldown increase
+- Cooldown decrease
+
+- haste
+- slow
+
+- dispell
+
+// defensive
+- Shield
+- Armor/Defense
+- Block
+- Evade/Ward
+
+# TODO
+Should certain effects have a stacking effect
+Example, Slow stacks up to 5 stacks 10% slow each
+then Resistances can block stacking or effect 
+
+
+### Overtime Aura 
+Stacking effect
+Stacking duration
+Refreshing duration
+Increasing Gauge before an effect is applied 
+
+### Damage Modifiers
+Flat damage increase
+Flat damage decrease
+Percentage damage increase
+Percentage damage decrease
+
+### Disable effects
+- stun
+- disarm - disables attack type ability
+- silence - disables spell type ability
+- cooldown mod - always flat
+
+### Dispells
+- removes stacks of certain effects
+Example: 
+Dispell 2 stacks of slow

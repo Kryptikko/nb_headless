@@ -48,4 +48,3 @@ Directionality: Some evidence suggests performance influences cohesion more than
 Cohesion is a resource that effects the xp gain by characters
 NOTE: this confuses the line between persona and character
 
-
