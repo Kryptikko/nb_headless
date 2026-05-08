@@ -42,6 +42,8 @@ Ability alternative targeting strategies are:
 - aoe - hits all enemies
 - random - hits randomly
 - random line - hits randomly in a specific line (front or back)
+- adjectent
+- infront|behind
 
 ## Combat Duration
 Combat duration should be between 20-40 seconds (median 30s), so it does not drag out.
@@ -94,6 +96,7 @@ Attacks continue while attack attack ability is on cooldown
 ### Passive
 Passive triggers
 Constant bonus
+Target strategy
 on ability cast (source or target)
 on ability hit (source or target)
 on ability crit (source or target)
