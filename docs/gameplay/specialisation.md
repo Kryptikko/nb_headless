@@ -53,3 +53,10 @@ This will tease the player by setting goals for exploration and allowing him to 
 # Explore
 - generalist progression (what if you don't specialize your members characters)
 - how would personas fit into specific specilizations (certain personas would be more efficient in specific roles?)
+
+# Themes focus around Moore & Gillette — King, Warrior, Magician, Lover
+Archetype | Active Shadow | Passive Shadow
+King | Tyrant | Weakling/Abdicator
+Warrior|Sadist | Masochist/Coward
+Magician | Manipulator | Naive/Innocent
+Lover | Addicted Lover | Impotent/Puritanical
