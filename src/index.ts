@@ -4,9 +4,12 @@ import index from "./index.html";
 const server = serve({
   routes: {
     // Serve index.html for all unmatched routes.
-    "/*": index,
+    "/": index,
+    "/tilemap_packed.png": Bun.file("./src/tilemap_packed.png"),
   },
-
+  fetch(req) {
+    return new Response("Not Found", { status: 404 });
+  },
   development: process.env.NODE_ENV !== "production" && {
     // Enable browser hot reloading in development
     hmr: true,
