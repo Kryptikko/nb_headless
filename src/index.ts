@@ -7,7 +7,7 @@ const server = serve({
     "/": index,
     "/tilemap_packed.png": Bun.file("./src/tilemap_packed.png"),
   },
-  fetch(req) {
+  fetch(_req) {
     return new Response("Not Found", { status: 404 });
   },
   development: process.env.NODE_ENV !== "production" && {

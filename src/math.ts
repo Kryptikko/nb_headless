@@ -1,4 +1,6 @@
 export type Vec2 = [number, number];
+export type Vec3 = [number, number, number];
+export type Vec4 = [number, number, number, number];
 export function normalize(v: Vec2) {
   const len = Math.hypot(v[0], v[1]);
   if (len === 0) return;
